@@ -48,16 +48,17 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // gets reset calcite-button
   const homeResetEl = document.getElementById('resetHome');
   const workResetEl = document.getElementById('resetWork');
-  // gets run calcite burron
+  // gets run calcite button
   const homeRunEl = document.getElementById('runHome');
   const workRunEl = document.getElementById('runWork');
-
+  // gets valid address message
+  const valHomeAddressEl = document.getElementById("validHomeAddress");
+  const valWorkAddressEl = document.getElementById("validWorkAddress");
 
   /**
    * Global variables
    */
 
-  
   // coordinates used for mapping
   let homeX;
   let homeY;
@@ -73,8 +74,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // grabs combobox inputs --> defaults to Car
   let homeTravelType = homeTravelTypeEl.value;
   let workTravelType = workTravelTypeEl.value;
-
-  
 
   /**
    * For side panels rendering configuration blocks
@@ -109,11 +108,30 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // Gets Home Address
   homeAddressElement.addEventListener('calciteInputTextChange', function(event) {
     homeAddress = event.target.value;
+    // adds message
+    if (homeAddress) {
+      valHomeAddressEl.icon="check";
+      valHomeAddressEl.status="valid";
+      valHomeAddressEl.innerText="YURRRR, change this";
+    } else {
+      valHomeAddressEl.icon="x";
+      valHomeAddressEl.status="invalid"
+      valHomeAddressEl.innerText="YURRR, also change this";
+    }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
   // Gets Work Address
   workAddressElement.addEventListener('calciteInputTextChange', function(event) {
     workAddress = event.target.value;
+    if (workAddress) {
+      valWorkAddressEl.icon="check";
+      valWorkAddressEl.status="valid";
+      valWorkAddressEl.innerText="YURRRR, change this";
+    } else {
+      valWorkAddressEl.icon="x";
+      valWorkAddressEl.status="invalid"
+      valWorkAddressEl.innerText="YURRR, also change this";
+    }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
   // Gets place input
@@ -130,13 +148,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // grabs home slider
   travelTimeEl.addEventListener('calciteSliderChange', function(event) {
     travelTime = event.target.value;
-    // plotHomeServiceArea()
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
   });
   // grabs work slider
   workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
     workCommuteTime = event.target.value;
-    // create service area()
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
   });
 
@@ -164,7 +180,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   // reset home button logic
   homeResetEl.addEventListener('click', function() {
-    console.log("hit")
     // reset to graphics layer
     homeGraphicsLayer.removeAll();
     // reseting logic
@@ -177,7 +192,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   });
   // reset work button logic
   workResetEl.addEventListener('click', function() {
-    console.log("hit")
     // reset to graphics layer
     workGraphicsLayer.removeAll();
     // reseting logic
