@@ -347,7 +347,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       
       const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-      const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4])
+      const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.3])
 
       // homeGraphicsLayer.add(polygonGraphic)
       changeView();
@@ -379,7 +379,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         workGraphicsLayer.add(pointGraphic);
 
       const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [0, 222, 166, 0.4] )
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [255, 255, 0, 0.3] )
 
         changeView();
       }
