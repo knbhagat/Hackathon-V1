@@ -12,13 +12,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   esriConfig.apiKey = apiKey;
 
   const map = new Map({
-    basemap: "arcgis/topographic" // basemap styles service
+    basemap: "arcgis/human-geography-dark" // basemap styles service
   });
 
   const view = new MapView({
     map: map,
-    center: [-95.7129, 37.0902], // Longitude, latitude
-    zoom: 5, // Zoom level
+    center: [-88.7129, 37.0902], // Longitude, latitude
+    scale: 12500000, // Zoom level
     container: "aniket-trial-map" // Div element
   });
 
@@ -315,7 +315,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       
       const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [212, 152, 214, 0.5])
+      const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [212, 152, 214, 0.5])
+
+      // homeGraphicsLayer.add(polygonGraphic)
       changeView();
     }
   }
@@ -345,7 +347,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       workGraphicsLayer.add(pointGraphic);
 
       const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
+      const workServiceArea = solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
+
       changeView();
     }
   }
