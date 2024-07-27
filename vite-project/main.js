@@ -1,6 +1,30 @@
 
 
-require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer"], function(esriConfig, Map, MapView, Graphic, GraphicsLayer) {
+require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer", "esri/rest/serviceArea",
+  "esri/rest/support/ServiceAreaParameters",
+  "esri/rest/support/FeatureSet",], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet) {
+
+
+  // Put all API config at start
+  // apiKey
+  const apiKey = "AAPTxy8BH1VEsoebNVZXo8HurAc00T0_aCwXYF3_LOJHWBDij15oOhVN95m5PvP3QQqjfdNP8-Pmtaxl2tr524Z5zCSTeXLF2P7FMqEsJaCjf5nI1Rt4RUI6oXjz-D6pj4bZNprcAFP5LwSzTRzSM6odj4tgoXO6PBXgK8lphnbuwkc7BlSg_ciFLfaKHtiRNo4p4Yca9NV5BMSLOGT1SMhRjwBTq5ALOQjUvE_V0U7giaY1BaYtPaOm_XHk5LMg1oK0AT1_DXkFiZ7P";
+
+  esriConfig.apiKey = apiKey;
+
+  const map = new Map({
+    basemap: "arcgis/topographic" // basemap styles service
+  });
+
+  const view = new MapView({
+    map: map,
+    center: [-95.7129, 37.0902], // Longitude, latitude
+    zoom: 5, // Zoom level
+    container: "aniket-trial-map" // Div element
+  });
+
+  const serviceAreaUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World/solveServiceArea";
+
+
   //KRISHAANS STUFF
 
   /**
@@ -26,8 +50,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
    * Global variables
    */
 
-  // apiKey
-  const apiKey = "AAPTxy8BH1VEsoebNVZXo8HurAc00T0_aCwXYF3_LOJHWBDij15oOhVN95m5PvP3QQqjfdNP8-Pmtaxl2tr524Z5zCSTeXLF2P7FMqEsJaCjf5nI1Rt4RUI6oXjz-D6pj4bZNprcAFP5LwSzTRzSM6odj4tgoXO6PBXgK8lphnbuwkc7BlSg_ciFLfaKHtiRNo4p4Yca9NV5BMSLOGT1SMhRjwBTq5ALOQjUvE_V0U7giaY1BaYtPaOm_XHk5LMg1oK0AT1_DXkFiZ7P";
+  
   // coordinates used for mapping
   let homeX;
   let homeY;
@@ -99,6 +122,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // Gets place input
   placeInputElement.addEventListener('calciteInputTextChange', function(event) {
     placeInput = event.target.value;
+    console.log(placeInputElement)
+    placeInputElement.value = ""
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
 
@@ -111,6 +136,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   travelTimeEl.addEventListener('calciteSliderChange', function(event) {
     console.log("original home commute time", travelTime)
     travelTime = event.target.value;
+
+    plotHomeServiceArea()
+
+    console.log("travelTime, workCommuteTime", travelTime, workCommuteTime)
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
     addHomeCoordinate();
   });
@@ -118,6 +147,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
     console.log("original work commute time", workCommuteTime)
     workCommuteTime = event.target.value;
+
+    // create service area()
+
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
   });
 
@@ -195,23 +227,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   }
 
-  esriConfig.apiKey = apiKey;
 
-  const map = new Map({
-    basemap: "arcgis/human-geography-dark" // basemap styles service
-  });
-  // initialization of map
-  let view = new MapView({
-    map: map,
-    center: [-88.7129, 37.0902], // Longitude, latitude
-    scale: 12500000, // Zoom level
-    container: "aniket-trial-map" // Div element
-  });
-  
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
-  // const homePolyGraphicsLayer = new GraphicsLayer();
-  const workPolyGraphicsLayer = new GraphicsLayer();
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
 
@@ -247,7 +265,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     if (homeX && homeY) {
       homeGraphicsLayer.removeAll()
       // Maybe add something right here to clear 
-      const point = { //Create a point
+      const homePoint = { //Create a point
         type: "point",
         longitude: homeX,
         latitude: homeY,
@@ -261,48 +279,30 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         }
       };
       const pointGraphic = new Graphic({
-        geometry: point,
+        geometry: homePoint,
         symbol: simpleMarkerSymbol
-      });
-
-      const polygon = { //Create a point
-        type: "polygon",
-        rings: 
-        // polygon sample
-        [
-        [homeX + 2, homeY],
-        [homeX, homeY + 2],
-        [homeX, homeY - 2],
-        [homeX - 2, homeY],
-        ]
-      };
-
-      const simpleFillSymbol = {
-          type: "simple-fill",
-          color: [227, 139, 79, 0.8],  // Orange, opacity 80%
-          outline: {
-              color: [255, 255, 255],
-              width: 1
-          }
-      };
-    
-      const polygonGraphic = new Graphic({
-          geometry: polygon,
-          symbol: simpleFillSymbol,
-      
       });
 
       // adds layer and recenters view
       homeGraphicsLayer.add(pointGraphic);
-      homeGraphicsLayer.add(polygonGraphic)
+
+      
+      const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
+      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [212, 152, 214, 0.5])
+
+      // homeGraphicsLayer.add(polygonGraphic)
       changeView();
+
     }
+
+
   }
 
   function addWorkCoordinate() {
     if (workX && workY) {
       workGraphicsLayer.removeAll();
-      const pointw = { //Create a point
+
+      const workPoint = { //Create a point
         type: "point",
         longitude: workX,
         latitude: workY,
@@ -316,12 +316,55 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         }
       };
       const pointGraphic = new Graphic({
-        geometry: pointw,
+        geometry: workPoint,
         symbol: simpleMarkerSymbol
       });
       // adds layer and recenters view
       workGraphicsLayer.add(pointGraphic);
+
+      const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
+
       changeView();
     }
   }
+
+  // Creates parameters for service area function call
+  function createServiceAreaParams(locationGraphic, driveTimeCutoff, outSpatialReference) {
+
+    const featureSet = new FeatureSet({
+      features: [locationGraphic]
+    })
+    
+    const taskParameters = new ServiceAreaParams({
+      facilities: featureSet,
+      defaultBreaks: driveTimeCutoff,
+      trimOuterPolygon: true,
+      outSpatialReference: outSpatialReference
+    });
+    return taskParameters;
+  }
+
+  // Creates service area polygon and returns graphic layer
+  function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color) {
+
+    return serviceArea.solve(url, serviceAreaParams)
+      .then(function(result){
+        if (result.serviceAreaPolygons.features.length) {
+          currentGraphicsLayer.removeAll()
+          // Draw each service area polygon
+          result.serviceAreaPolygons.features.forEach(function(graphic){
+            graphic.symbol = {
+              type: "simple-fill",
+              color: color
+            }
+            currentGraphicsLayer.add(graphic,0);
+          });
+        }
+      }, function(error){
+        console.log(error);
+      });
+
+  }
+
 })
