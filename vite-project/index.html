@@ -32,9 +32,7 @@
           <calcite-action id="work" text="Work" icon="organization"></calcite-action>
           <calcite-action id="places" text="Places" icon="pins"></calcite-action>
         </calcite-action-bar>
-
         <calcite-panel heading="Configuration:">
-
           <calcite-block open id="homeContainer" class="calcite-blocks">
             <calcite-label>Home Address:
               <calcite-input-text icon="pin-tear-f" id="homeAddress" placeholder="Address"></calcite-input-text>
@@ -42,7 +40,7 @@
                 Point added to the map!
             </calcite-input-message>
             </calcite-label>
-            <br>
+            <hr class="mint-hr">
             <calcite-label>
               Travel Mode:
               <calcite-combobox id="homeTravelType" value="Driving" placeholder-icon="rural-driving-time" placeholder="Travel Mode" selection-mode="single">
@@ -50,12 +48,12 @@
                   <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
               </calcite-combobox>
           </calcite-label>
-          <br>
+          <hr class="mint-hr">
               <calcite-label>
                 Travel Time (minutes):
                 <calcite-slider id=homeSlider label="Preferred Home Commute" value="30" label-handles label-ticks ticks="10" min-label="0" max-label="100"></calcite-slider>
             </calcite-label>
-            <br>
+            <hr class="mint-hr">
             <div style="display: flex; width: 100%;">
               <calcite-button icon-start="reset" appearance="outline-fill" width="half">Reset</calcite-button>
               <calcite-button  icon-start="play" width="half">Run</calcite-button>
@@ -65,7 +63,11 @@
         <calcite-block open id="workContainer" class="hidden calcite-blocks">
           <calcite-label>Work Address:
             <calcite-input-text icon="pin-tear-f" id="workAddress" placeholder="Address"></calcite-input-text>
+            <calcite-input-message icon="check" status="valid" scale="m">
+              Point added to the map!
+          </calcite-input-message>
           </calcite-label>
+          <hr class="mint-hr">
           <calcite-label>
             Travel Mode:
             <calcite-combobox id="workTravelType" value="Driving" placeholder-icon="rural-driving-time" placeholder="Travel Mode" selection-mode="single">
@@ -73,9 +75,15 @@
                 <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
             </calcite-combobox>
         </calcite-label>
+        <hr class="mint-hr">
           <calcite-label>Travel Time (minutes):
             <calcite-slider id="workSlider" label="Preferred Work Commute" value="30" label-handles label-ticks ticks="10" min-label="0" max-label="100"></calcite-slider>
           </calcite-label>
+          <hr class="mint-hr">
+          <div style="display: flex; width: 100%;">
+            <calcite-button icon-start="reset" appearance="outline-fill" width="half">Reset</calcite-button>
+            <calcite-button  icon-start="play" width="half">Run</calcite-button>
+            </div>
         </calcite-block>
 
         <calcite-block open id="placesContainer" class="hidden calcite-blocks">
