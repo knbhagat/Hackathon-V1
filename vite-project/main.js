@@ -26,6 +26,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     // Object to hold geometries before calculating intersection
     let serviceAreaGeometries = {}
+    // Object to hold geometries before calculating intersection
+    let serviceAreaGeometries = {}
 
     //KRISHAANS STUFF
 
@@ -217,28 +219,45 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     /**
      * Grabs combobox info from user
      */
-
     // grabs home travel type
     homeTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
       const val = event.target.value;
       homeTravelType = val;
-      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+      console.log("home travel type", homeTravelType);
     });
 
     // grabs work travel type
     workTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
       const val = event.target.value;
       workTravelType = val;
-      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+      // if (workTravelType == "Walking")
+      // console.log("work travel type", workTravelType);
     })
 
     // grabs custom travel typ
     customTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
       const val = event.target.value;
       customTravelType = val;
-      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+      console.log("custom travel type", customTravelType);
     })
 
+    /**
+     * Travel Mode JSON Objects
+    */
+    const walkingTravelMode = {
+      "attributeParameterValues": [],
+      "description": "Walking Time",
+      "distanceAttributeName": "WalkTime",
+      "id": "caFAwlk",
+      "impedanceAttributeName": "WalkTime",
+      "name": "Walking Time",
+      "restrictions": ["Avoid Private Roads", "Avoid Unpaved Roads"],
+      "simplificationTolerance": 2,
+      "simplificationToleranceUnits": "meters",
+      "type": "walk"
+    };
+
+    
     /**
      * implements button logic
      */
@@ -507,7 +526,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         homeGraphicsLayer.add(pointGraphic);
 
         // Service area for home address
-        const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
+        const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference, homeTravelType))
         solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4], 'home');
 
         changeView();
@@ -541,7 +560,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         customGraphicsLayer.add(pointGraphic);
 
 
-        const customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
+        const customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference, customTravelType))
         solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, [0, 222, 166, 0.4], 'custom')
         changeView();
       }
@@ -573,7 +592,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         workGraphicsLayer.add(pointGraphic);
 
         // Service area for work address
-        const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
+        const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference, workTravelType))
         solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], 'work')
 
 
@@ -582,7 +601,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     // Creates parameters for service area function call
-    function createServiceAreaParams(locationGraphic, driveTimeCutoff, outSpatialReference) {
+    function createServiceAreaParams(locationGraphic, driveTimeCutoff, outSpatialReference, travelType) {
       const featureSet = new FeatureSet({
         features: [locationGraphic]
       })
@@ -593,6 +612,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         trimOuterPolygon: true,
         outSpatialReference: outSpatialReference
       });
+
+      if(travelType == "Walking" ){
+        taskParameters.travelMode = walkingTravelMode
+      }
+
       return taskParameters;
     }
 
