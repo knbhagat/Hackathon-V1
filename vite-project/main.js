@@ -17,7 +17,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   const placeInputElement = document.getElementById('placeInput');
   // gets calcite-slider elements
   const travelTimeEl = document.getElementById('homeSlider');
-  console.log(travelTimeEl)
   const workCommuteTimeEl = document.getElementById('workSlider');
   // gets calcite-combobox elements
   const homeTravelTypeEl = document.getElementById('homeTravelType');
@@ -81,7 +80,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     homeAddress = event.target.value;
     if (homeAddress) {
       geocodeHomeAddress(homeAddress);
-      plotPolygonHomeAddress();
     } else {
       homeGraphicsLayer.removeAll();
     }
@@ -113,9 +111,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   travelTimeEl.addEventListener('calciteSliderChange', function(event) {
     console.log("original home commute time", travelTime)
     travelTime = event.target.value;
-    console.log("travelTime, workCommuteTime", travelTime, workCommuteTime)
-    plotPolygonHomeAddress();
-
+    console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
+    addHomeCoordinate();
   });
   // grabs work slider
   workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
@@ -213,12 +210,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
-  const homePolyGraphicsLayer = new GraphicsLayer();
+  // const homePolyGraphicsLayer = new GraphicsLayer();
   const workPolyGraphicsLayer = new GraphicsLayer();
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
-  map.add(homePolyGraphicsLayer);
-  map.add(workPolyGraphicsLayer)
 
   /**
    * functions to modify map zoom
@@ -269,8 +264,37 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         geometry: point,
         symbol: simpleMarkerSymbol
       });
+
+      const polygon = { //Create a point
+        type: "polygon",
+        rings: 
+        // polygon sample
+        [
+        [homeX + 2, homeY],
+        [homeX, homeY + 2],
+        [homeX, homeY - 2],
+        [homeX - 2, homeY],
+        ]
+      };
+
+      const simpleFillSymbol = {
+          type: "simple-fill",
+          color: [227, 139, 79, 0.8],  // Orange, opacity 80%
+          outline: {
+              color: [255, 255, 255],
+              width: 1
+          }
+      };
+    
+      const polygonGraphic = new Graphic({
+          geometry: polygon,
+          symbol: simpleFillSymbol,
+      
+      });
+
       // adds layer and recenters view
       homeGraphicsLayer.add(pointGraphic);
+      homeGraphicsLayer.add(polygonGraphic)
       changeView();
     }
   }
@@ -300,36 +324,4 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       changeView();
     }
   }
-
-    function plotPolygonHomeAddress(){
-        if (homeX && homeY && travelTime) {
-            homePolyGraphicsLayer.removeAll()
-            // Maybe add something right here to clear 
-            const polygon = { //Create a point
-                type: "polygon",
-                rings: 
-                [
-                [homeX, homeY] 
-                [homeX + travelTime, homeY + travelTime]
-                ]
-            };
-
-            const simpleFillSymbol = {
-                type: "simple-fill",
-                color: [227, 139, 79, 0.8],  // Orange, opacity 80%
-                outline: {
-                    color: [255, 255, 255],
-                    width: 1
-                }
-            };
-            
-            const polygonGraphic = new Graphic({
-                geometry: polygon,
-                symbol: simpleFillSymbol,
-            
-            });
-            homePolyGraphicsLayer.add(polygonGraphic);
-        }
-    }
-
 })
