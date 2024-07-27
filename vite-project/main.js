@@ -47,6 +47,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
    * Global variables
    */
 
+  // apiKey
+  const apiKey = "AAPTxy8BH1VEsoebNVZXo8HurAc00T0_aCwXYF3_LOJHWBDij15oOhVN95m5PvP3QQqjfdNP8-Pmtaxl2tr524Z5zCSTeXLF2P7FMqEsJaCjf5nI1Rt4RUI6oXjz-D6pj4bZNprcAFP5LwSzTRzSM6odj4tgoXO6PBXgK8lphnbuwkc7BlSg_ciFLfaKHtiRNo4p4Yca9NV5BMSLOGT1SMhRjwBTq5ALOQjUvE_V0U7giaY1BaYtPaOm_XHk5LMg1oK0AT1_DXkFiZ7P";
+  // coordinates used for mapping
+  let homeX;
+  let homeY;
+  let workX;
+  let workY;
   // text-label inputs
   let homeAddress;
   let workAddress;
@@ -134,12 +141,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   /////aniket
 
-  const apiKey = "AAPTxy8BH1VEsoebNVZXo8HurAc00T0_aCwXYF3_LOJHWBDij15oOhVN95m5PvP3QQqjfdNP8-Pmtaxl2tr524Z5zCSTeXLF2P7FMqEsJaCjf5nI1Rt4RUI6oXjz-D6pj4bZNprcAFP5LwSzTRzSM6odj4tgoXO6PBXgK8lphnbuwkc7BlSg_ciFLfaKHtiRNo4p4Yca9NV5BMSLOGT1SMhRjwBTq5ALOQjUvE_V0U7giaY1BaYtPaOm_XHk5LMg1oK0AT1_DXkFiZ7P";
-  let homeX;
-  let homeY;
-  let workX;
-  let workY;
 
+  /**
+  * Mapping functions
+  */
   function geocodeHomeAddress(){
     const geocodedUrl= `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${homeAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
     fetch(geocodedUrl)
@@ -237,6 +242,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   function addWorkCoordinate() {
     if (workX && workY) {
+      workGraphicsLayer.removeAll();
       const pointw = { //Create a point
         type: "point",
         longitude: workX,
@@ -257,5 +263,4 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       workGraphicsLayer.add(pointGraphic);
     }
   }
-
 })
