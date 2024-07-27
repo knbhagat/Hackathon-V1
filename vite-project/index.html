@@ -13,23 +13,13 @@
     <script type="module" src="https://js.arcgis.com/map-components/4.30/arcgis-map-components.esm.js"></script>
     <!-- Links current style sheets -->
     <link rel="stylesheet" href="style.css">
-    <style>
-      html,
-      body,
-      #aniket-trial-map {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-      }
-    </style>
   </head>
-  <body>
+  <body class="mint">
     <div id="app"></div>
     <calcite-shell content-behind>
 
       <calcite-navigation slot="header" >
-        <calcite-navigation-logo slot="logo" heading="Recent Grad Idea" icon="education" description="Summer 2024 Hackathon"></calcite-navigation-logo>
+        <calcite-navigation-logo slot="logo" heading="SettleSmart" icon="rings-largest" description="Post-graduation Planning Solution"></calcite-navigation-logo>
         <calcite-menu slot="content-end" >
           <calcite-menu-item text="Documentation" icon-start="notepad"></calcite-menu-item>
         </calcite-menu>
@@ -41,38 +31,59 @@
           <calcite-action id="home" text="Home" icon="home"></calcite-action>
           <calcite-action id="work" text="Work" icon="organization"></calcite-action>
           <calcite-action id="places" text="Places" icon="pins"></calcite-action>
-          <calcite-action-group columns="2" slot="actions-end">
-            <calcite-action text="Run" icon="play"></calcite-action>
-            <calcite-action text="Cancel" icon="reset"></calcite-action>
-          </calcite-action-group>
         </calcite-action-bar>
-
-        <calcite-panel heading="Configuration">
-
+        <calcite-panel heading="Configuration:">
           <calcite-block open id="homeContainer" class="calcite-blocks">
             <calcite-label>Home Address:
               <calcite-input-text icon="pin-tear-f" id="homeAddress" placeholder="Address"></calcite-input-text>
+              <calcite-input-message icon="check" status="valid" scale="m">
+                Point added to the map!
+            </calcite-input-message>
             </calcite-label>
+            <hr class="mint-hr">
             <calcite-label>
               Travel Mode:
-              <calcite-combobox id="travelType" placeholder-icon="rural-driving-time" placeholder="Travel Mode" selection-mode="single">
-                  <calcite-combobox-item selected icon="car" value="Car" text-label="Car"></calcite-combobox-item>
+              <calcite-combobox id="homeTravelType" value="Driving" placeholder-icon="rural-driving-time" placeholder="Travel Mode" selection-mode="single">
+                  <calcite-combobox-item selected icon="car" value="Driving" text-label="Driving"></calcite-combobox-item>
                   <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
               </calcite-combobox>
           </calcite-label>
+          <hr class="mint-hr">
               <calcite-label>
-                Travel Time
+                Travel Time (minutes):
                 <calcite-slider id=homeSlider label="Preferred Home Commute" value="30" label-handles label-ticks ticks="10" min-label="0" max-label="100"></calcite-slider>
             </calcite-label>
+            <hr class="mint-hr">
+            <div style="display: flex; width: 100%;">
+              <calcite-button icon-start="reset" appearance="outline-fill" width="half">Reset</calcite-button>
+              <calcite-button  icon-start="play" width="half">Run</calcite-button>
+              </div>
           </calcite-block>
 
         <calcite-block open id="workContainer" class="hidden calcite-blocks">
           <calcite-label>Work Address:
             <calcite-input-text icon="pin-tear-f" id="workAddress" placeholder="Address"></calcite-input-text>
+            <calcite-input-message icon="check" status="valid" scale="m">
+              Point added to the map!
+          </calcite-input-message>
           </calcite-label>
-          <calcite-label>Preferred Work Commute:
+          <hr class="mint-hr">
+          <calcite-label>
+            Travel Mode:
+            <calcite-combobox id="workTravelType" value="Driving" placeholder-icon="rural-driving-time" placeholder="Travel Mode" selection-mode="single">
+                <calcite-combobox-item selected icon="car" value="Driving" text-label="Driving"></calcite-combobox-item>
+                <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
+            </calcite-combobox>
+        </calcite-label>
+        <hr class="mint-hr">
+          <calcite-label>Travel Time (minutes):
             <calcite-slider id="workSlider" label="Preferred Work Commute" value="30" label-handles label-ticks ticks="10" min-label="0" max-label="100"></calcite-slider>
           </calcite-label>
+          <hr class="mint-hr">
+          <div style="display: flex; width: 100%;">
+            <calcite-button icon-start="reset" appearance="outline-fill" width="half">Reset</calcite-button>
+            <calcite-button  icon-start="play" width="half">Run</calcite-button>
+            </div>
         </calcite-block>
 
         <calcite-block open id="placesContainer" class="hidden calcite-blocks">
@@ -85,19 +96,10 @@
           </div>
         </calcite-block>
       </calcite-panel>
-
       </calcite-shell-panel>
-      <div id="aniket-trial-map"></div>
+        <div class="mint" id="aniket-trial-map"></div>
     </calcite-shell>
     
-    <!-- <arcgis-map id="mapEl" item-id="cb1e181c8ce6479382b00f34532bd40e">
-      <arcgis-zoom position="top-right"></arcgis-zoom>
-      <arcgis-legend position="bottom-right"></arcgis-legend>
-      <arcgis-search position="top-left">
-      </arcgis-search>
-    </arcgis-map> -->
-    
-
     <script src="main.js"></script>
   </body>
 </html>
