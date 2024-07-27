@@ -230,6 +230,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
+  workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)"
+  homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)"
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
 
