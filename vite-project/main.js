@@ -83,6 +83,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // grabs combobox inputs --> defaults to Car
   let homeTravelType = homeTravelTypeEl.value;
   let workTravelType = workTravelTypeEl.value;
+  // intersect xoords
+  let intersectLat;
+  let intersectLong;
   let intersect;
 
   
@@ -431,6 +434,16 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           // run intersection tool only if if there are two service area geometry elements
           if (Object.keys(serviceAreaGeometries).length == 2){
             intersect = geometryEngine.intersect(serviceAreaGeometries.homeGeometry, serviceAreaGeometries.workGeometry)
+
+            intersectLat = intersect.centroid.latitude
+            intersectLong = intersect.centroid.longitude
+            console.log(intersectLat, intersectLong)
+
+            view.goTo({
+              center: [intersectLong, intersectLat],
+              zoom: 10,
+            });
+            
 
             // sends each ring of intersection geometry to funciton to draw polygons
             for (let index = 0; index < intersect.rings.length; index++) {
