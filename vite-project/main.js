@@ -109,7 +109,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     infoElement.addEventListener('click', () => {
       loadInfoGraphic();
-      modal.open = true;
+      // modal.open = true;
     });
 
     /**
@@ -416,18 +416,14 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
 
-
     function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
 
-      let itemid = "ca02fc5f2390457e8ef20029e627dc31"; // Race and Age Profile Dark Theme (Esri 2024)
-      itemid = "6679ef4321494048bdb6a6d163cdecb4"; // Community Profile Hackathon
-      report = '{"itemid":"6679ef4321494048bdb6a6d163cdecb4","url":"intern-hackathon.maps.arcgis.com"}'
+      let itemid = "8c4eeb44679c422a86fdbb392d81adeb"; // State of the Community custom
 
-      report = '{"token":"' + token + '","url":"https://intern-hackathon.maps.arcgis.com","itemid":"555f7fa39f464f81b52248cb9b0773e2"}'
+      report = '{"token":"' + token + '","url":"https://intern-hackathon.maps.arcgis.com","itemid":"' + itemid + '"}'
 
       studyAreas = "[{geometry:{x:-122.3328,y:47.6061}}]";
       format = "html";
-
 
 
       let url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/createReport?";
@@ -442,7 +438,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     function loadInfoGraphic() {
-
       const requestOptions = {
         method: "GET",
         redirect: "follow"
@@ -450,7 +445,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       const token = "AAPTxy8BH1VEsoebNVZXo8HurIdz3p260SczOzIA26HzLpx1DvmZTCB6gARrkkrsnzwq10KRe_AC_3HGoPrysBwmHkl50BBQrZClTvypptAz3IDaPwqtQxekFnffLCo3JCsRs5bCNMUiFuqSAfPTqv0fpRJF1ZR_gulfqMSTAdSS-tRU2J3VWybItUcpQUD2hk_fCFIO0UPFhHGSpM_krsAy_7dD9NWoliM-x50Z8qOMrMY7xpHt4Y3Wf1RUBOPwEW7dAT1_Tb3ffdWB";
 
-      let url = buildRequestURL(token, "", "", "html")
+      let url = buildRequestURL(token, "", "", "html");
+      return;
+
       console.log("URL: " + url);
 
       fetch(url, requestOptions)
@@ -468,4 +465,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         })
         .catch((error) => console.error(error));
     }
+
+
+
+
+
   })
