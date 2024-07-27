@@ -40,9 +40,9 @@
         <calcite-block open id="homeContainer" class="calcite-blocks">
           <calcite-label>Home Address:
             <calcite-input-text icon="pin-tear-f" id="homeAddress" placeholder="Address"></calcite-input-text>
-            <calcite-input-message icon="check" status="valid" scale="m">
-              Point added to the map!
-            </calcite-input-message>
+            <calcite-input-message id="validHomeAddress" icon="x" status="invalid" scale="m">
+              Add Text to show invalid
+              </calcite-input-message>  
           </calcite-label>
           <hr class="mint-hr">
           <calcite-label>
@@ -54,24 +54,23 @@
             </calcite-combobox>
           </calcite-label>
           <hr class="mint-hr">
-          <calcite-label>
-            Travel Time (minutes):
-            <calcite-slider id=homeSlider label="Preferred Home Commute" value="30" label-handles label-ticks ticks="10"
-              min-label="0" max-label="100"></calcite-slider>
-          </calcite-label>
-          <hr class="mint-hr">
-          <div style="display: flex; width: 100%;">
-            <calcite-button icon-start="reset" appearance="outline-fill" width="half">Reset</calcite-button>
-            <calcite-button icon-start="play" width="half">Run</calcite-button>
-          </div>
-        </calcite-block>
+              <calcite-label>
+                Travel Time (minutes):
+                <calcite-slider id=homeSlider label="Preferred Home Commute" value="30" label-handles label-ticks ticks="10" min-label="0" max-label="100"></calcite-slider>
+            </calcite-label>
+            <hr class="mint-hr">
+            <div style="display: flex; width: 100%;">
+              <calcite-button icon-start="reset" id="resetHome" appearance="outline-fill" width="half">Reset</calcite-button>
+              <calcite-button  icon-start="play" id="runHome" width="half">Run</calcite-button>
+              </div>
+          </calcite-block>
 
         <calcite-block open id="workContainer" class="hidden calcite-blocks">
           <calcite-label>Work Address:
             <calcite-input-text icon="pin-tear-f" id="workAddress" placeholder="Address"></calcite-input-text>
-            <calcite-input-message icon="check" status="valid" scale="m">
-              Point added to the map!
-            </calcite-input-message>
+              <calcite-input-message id="validWorkAddress" icon="x" status="invalid" scale="m">
+                Add Text to show invalid
+              </calcite-input-message>
           </calcite-label>
           <hr class="mint-hr">
           <calcite-label>
@@ -89,9 +88,9 @@
           </calcite-label>
           <hr class="mint-hr">
           <div style="display: flex; width: 100%;">
-            <calcite-button icon-start="reset" appearance="outline-fill" width="half">Reset</calcite-button>
-            <calcite-button icon-start="play" width="half">Run</calcite-button>
-          </div>
+            <calcite-button icon-start="reset" id="resetWork" appearance="outline-fill" width="half">Reset</calcite-button>
+            <calcite-button icon-start="play" id="runWork" width="half">Run</calcite-button>
+            </div>
         </calcite-block>
 
         <calcite-block open id="placesContainer" class="hidden calcite-blocks">
