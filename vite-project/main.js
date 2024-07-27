@@ -230,8 +230,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
-  // const homePolyGraphicsLayer = new GraphicsLayer();
-  const workPolyGraphicsLayer = new GraphicsLayer();
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
 
@@ -267,7 +265,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     if (homeX && homeY) {
       homeGraphicsLayer.removeAll()
       // Maybe add something right here to clear 
-      const point = { //Create a point
+      const homePoint = { //Create a point
         type: "point",
         longitude: homeX,
         latitude: homeY,
@@ -281,44 +279,16 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         }
       };
       const pointGraphic = new Graphic({
-        geometry: point,
+        geometry: homePoint,
         symbol: simpleMarkerSymbol
-      });
-
-      const polygon = { //Create a point
-        type: "polygon",
-        rings: 
-        // polygon sample
-        [
-        [homeX + 2, homeY],
-        [homeX, homeY + 2],
-        [homeX, homeY - 2],
-        [homeX - 2, homeY],
-        ]
-      };
-
-      const simpleFillSymbol = {
-          type: "simple-fill",
-          color: [227, 139, 79, 0.8],  // Orange, opacity 80%
-          outline: {
-              color: [255, 255, 255],
-              width: 1
-          }
-      };
-    
-      const polygonGraphic = new Graphic({
-          geometry: polygon,
-          symbol: simpleFillSymbol,
-      
       });
 
       // adds layer and recenters view
       homeGraphicsLayer.add(pointGraphic);
 
       
-      // Hardcoding a service area with 15 minute drive time
       const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-      const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, "#788496" )
+      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [212, 152, 214, 0.5])
 
       // homeGraphicsLayer.add(polygonGraphic)
       changeView();
@@ -331,7 +301,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   function addWorkCoordinate() {
     if (workX && workY) {
       workGraphicsLayer.removeAll();
-      const pointw = { //Create a point
+
+      const workPoint = { //Create a point
         type: "point",
         longitude: workX,
         latitude: workY,
@@ -345,14 +316,14 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         }
       };
       const pointGraphic = new Graphic({
-        geometry: pointw,
+        geometry: workPoint,
         symbol: simpleMarkerSymbol
       });
       // adds layer and recenters view
       workGraphicsLayer.add(pointGraphic);
 
       const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      const workServiceArea = solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
 
       changeView();
     }
@@ -395,12 +366,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       });
 
   }
-
-  function plotHomeServiceArea(){
-
-
-  }
-
 
 })
 
