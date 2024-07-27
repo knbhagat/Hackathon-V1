@@ -12,13 +12,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   esriConfig.apiKey = apiKey;
 
   const map = new Map({
-    basemap: "arcgis/topographic" // basemap styles service
+    basemap: "arcgis/human-geography-dark" // basemap styles service
   });
 
   const view = new MapView({
     map: map,
-    center: [-95.7129, 37.0902], // Longitude, latitude
-    zoom: 5, // Zoom level
+    center: [-88.7129, 37.0902], // Longitude, latitude
+    scale: 12500000, // Zoom level
     container: "aniket-trial-map" // Div element
   });
 
