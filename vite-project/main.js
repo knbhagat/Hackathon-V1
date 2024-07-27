@@ -26,8 +26,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     // Object to hold geometries before calculating intersection
     let serviceAreaGeometries = {}
-    // Object to hold geometries before calculating intersection
-    let serviceAreaGeometries = {}
 
     //KRISHAANS STUFF
 
