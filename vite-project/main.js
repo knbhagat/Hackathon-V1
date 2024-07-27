@@ -80,30 +80,33 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
      * Global variables
      */
 
-  
-  // coordinates used for mapping
-  let homeX;
-  let homeY;
-  let workX;
-  let workY;
-  let customX;
-  let customY;
-  // text-label inputs
-  let homeAddress;
-  let workAddress;
-  let customAddress;
-  let placeInput;
-  // slider inputs
-  let travelTime = travelTimeEl.value;
-  let workCommuteTime = workCommuteTimeEl.value;
-    let customTime  = customTimeEl.value;
-  // grabs combobox inputs --> defaults to Car
-  let homeTravelType = homeTravelTypeEl.value;
-  let workTravelType = workTravelTypeEl.value;
-  let customTravelType = customTravelTypeEl.value;
-  let intersect;
 
-  
+    // coordinates used for mapping
+    let homeX;
+    let homeY;
+    let workX;
+    let workY;
+    let customX;
+    let customY;
+    // text-label inputs
+    let homeAddress;
+    let workAddress;
+    let customAddress;
+    let placeInput;
+    // slider inputs
+    let travelTime = travelTimeEl.value;
+    let workCommuteTime = workCommuteTimeEl.value;
+    let customTime = customTimeEl.value;
+    // grabs combobox inputs --> defaults to Car
+    let homeTravelType = homeTravelTypeEl.value;
+    let workTravelType = workTravelTypeEl.value;
+    let customTravelType = customTravelTypeEl.value;
+    // intersect xoords
+    let intersectLat;
+    let intersectLong;
+    let intersect;
+
+
 
     /**
      * For side panels rendering configuration blocks
@@ -139,7 +142,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     infoElement.addEventListener('click', () => {
       loadInfoGraphic();
-      modal.open = true;
     });
 
     /**
@@ -174,72 +176,89 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         valWorkAddressEl.innerText = "Invalid address";
       }
       console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
-  });
-  // Get Custom Address
-  customAddressElement.addEventListener('calciteInputTextChange', function(event) {
-    customAddress = event.target.value;
-    if (customAddress) {
-      valCustomAddressEl.icon="check";
-      valCustomAddressEl.status="valid";
-      valCustomAddressEl.innerText="Place added on map!";
-    } else {
-      valCustomAddressEl.icon="x";
-      valCustomAddressEl.status="invalid"
-      valCustomAddressEl.innerText="Invalid address";
-    }
-    console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
+    });
+    // Get Custom Address
+    customAddressElement.addEventListener('calciteInputTextChange', function (event) {
+      customAddress = event.target.value;
+      if (customAddress) {
+        valCustomAddressEl.icon = "check";
+        valCustomAddressEl.status = "valid";
+        valCustomAddressEl.innerText = "Place added on map!";
+      } else {
+        valCustomAddressEl.icon = "x";
+        valCustomAddressEl.status = "invalid"
+        valCustomAddressEl.innerText = "Invalid address";
+      }
+      console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
     });
     // Gets place input
     placeInputElement.addEventListener('calciteInputTextChange', function (event) {
       placeInput = event.target.value;
       console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
     });
-  
-  /**
-   * Grabs slider inputs from user
-   */
 
-  // grabs home slider
-  travelTimeEl.addEventListener('calciteSliderChange', function(event) {
-    travelTime = event.target.value;
-    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
-  });
-  // grabs work slider
-  workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
-    workCommuteTime = event.target.value;
-    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
-  });
-  // grabs custom slider
-  customTimeEl.addEventListener('calciteSliderChange', function(event) {
-    customTime = event.target.value;
-    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
-  });
+    /**
+     * Grabs slider inputs from user
+     */
 
-  /**
-   * Grabs combobox info from user
-   */
+    // grabs home slider
+    travelTimeEl.addEventListener('calciteSliderChange', function (event) {
+      travelTime = event.target.value;
+      console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+    });
+    // grabs work slider
+    workCommuteTimeEl.addEventListener('calciteSliderChange', function (event) {
+      workCommuteTime = event.target.value;
+      console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+    });
+    // grabs custom slider
+    customTimeEl.addEventListener('calciteSliderChange', function (event) {
+      customTime = event.target.value;
+      console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+    });
 
-  // grabs home travel type
-  homeTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
-    const val = event.target.value;
-    homeTravelType = val;
-    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
-  });
+    /**
+     * Grabs combobox info from user
+     */
+    // grabs home travel type
+    homeTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
+      const val = event.target.value;
+      homeTravelType = val;
+      console.log("home travel type", homeTravelType);
+    });
 
-  // grabs work travel type
-  workTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
-    const val = event.target.value;
-    workTravelType = val;
-    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
-  })
+    // grabs work travel type
+    workTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
+      const val = event.target.value;
+      workTravelType = val;
+      // if (workTravelType == "Walking")
+      // console.log("work travel type", workTravelType);
+    })
 
-  // grabs custom travel typ
-  customTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
-    const val = event.target.value;
-    customTravelType = val;
-    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
-  })
+    // grabs custom travel typ
+    customTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
+      const val = event.target.value;
+      customTravelType = val;
+      console.log("custom travel type", customTravelType);
+    })
 
+    /**
+     * Travel Mode JSON Objects
+    */
+    const walkingTravelMode = {
+      "attributeParameterValues": [],
+      "description": "Walking Time",
+      "distanceAttributeName": "WalkTime",
+      "id": "caFAwlk",
+      "impedanceAttributeName": "WalkTime",
+      "name": "Walking Time",
+      "restrictions": ["Avoid Private Roads", "Avoid Unpaved Roads"],
+      "simplificationTolerance": 2,
+      "simplificationToleranceUnits": "meters",
+      "type": "walk"
+    };
+
+    
     /**
      * implements button logic
      */
@@ -380,30 +399,30 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           // Handle any errors
           console.error("Error occurred: ", error);
         });
-  }
+    }
 
-  function geocodeCustomAddress(){
-    console.log("Custom address API response")
-    const geocodedUrlwork= `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${customAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
-    fetch(geocodedUrlwork)
-      .then(function(responsec) {
-        if (!responsec.ok) {
-          throw new Error('Network response was not ok ' + responsec.statusText);
-        }
-        return responsec.json();
-      })
-      .then(function(datac) {
-        // Handle the response data
-        console.log("Geocode response for work addy: ", datac);
-        customX = datac.candidates[0]?.location.x;
-        customY = datac.candidates[0]?.location.y;
-        addCustomCoordinate()
-      })
-      .catch(function(error) {
-        // Handle any errors
-        console.error("Error occurred: ", error);
-      });
-  }
+    function geocodeCustomAddress() {
+      console.log("Custom address API response")
+      const geocodedUrlwork = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${customAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
+      fetch(geocodedUrlwork)
+        .then(function (responsec) {
+          if (!responsec.ok) {
+            throw new Error('Network response was not ok ' + responsec.statusText);
+          }
+          return responsec.json();
+        })
+        .then(function (datac) {
+          // Handle the response data
+          console.log("Geocode response for work addy: ", datac);
+          customX = datac.candidates[0]?.location.x;
+          customY = datac.candidates[0]?.location.y;
+          addCustomCoordinate()
+        })
+        .catch(function (error) {
+          // Handle any errors
+          console.error("Error occurred: ", error);
+        });
+    }
 
   // Graphics layers for home, work, and intersection
   const homeGraphicsLayer = new GraphicsLayer();
@@ -578,7 +597,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     // Creates parameters for service area function call
-    function createServiceAreaParams(locationGraphic, driveTimeCutoff, outSpatialReference) {
+    function createServiceAreaParams(locationGraphic, driveTimeCutoff, outSpatialReference, travelType) {
       const featureSet = new FeatureSet({
         features: [locationGraphic]
       })
@@ -589,6 +608,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         trimOuterPolygon: true,
         outSpatialReference: outSpatialReference
       });
+
+      if(travelType == "Walking" ){
+        taskParameters.travelMode = walkingTravelMode
+      }
+
       return taskParameters;
     }
 
@@ -642,18 +666,18 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     });
   }
 
-  // function to draw polygon for each ring in intersection geometry
-  function createIntersectPolygon(intersection, index){
+    // function to draw polygon for each ring in intersection geometry
+    function createIntersectPolygon(intersection, index) {
 
-    const intersectionPolygon = {
-      type: "polygon", 
-      rings: [intersection.rings[index]]
-    }
-    
-    const simpleFillSymbol = {
-      type: "simple-fill",
-      color: [227, 139, 79, 0.2],  // Orange, opacity 80%
-      outline: {
+      const intersectionPolygon = {
+        type: "polygon",
+        rings: [intersection.rings[index]]
+      }
+
+      const simpleFillSymbol = {
+        type: "simple-fill",
+        color: [227, 139, 79, 0.2],  // Orange, opacity 80%
+        outline: {
           color: [255, 255, 255],
           width: 1
       }
@@ -671,54 +695,65 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   
   function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
 
-    let itemid = "ca02fc5f2390457e8ef20029e627dc31"; // Race and Age Profile Dark Theme (Esri 2024)
-    itemid = "6679ef4321494048bdb6a6d163cdecb4"; // Community Profile Hackathon
-    report = '{"itemid":"6679ef4321494048bdb6a6d163cdecb4","url":"intern-hackathon.maps.arcgis.com"}'
+      console.log('study: ' + studyAreas );
 
-    report = '{"token":"' + token + '","url":"https://intern-hackathon.maps.arcgis.com","itemid":"555f7fa39f464f81b52248cb9b0773e2"}'
+      let itemid = "8c4eeb44679c422a86fdbb392d81adeb"; // State of the Community custom
 
-    studyAreas = "[{geometry:{x:-122.3328,y:47.6061}}]";
-    format = "html";
+      report = '{"token":"' + token + '","url":"https://intern-hackathon.maps.arcgis.com","itemid":"' + itemid + '"}'
 
-
-
-    let url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/createReport?";
-    url += "report=" + report;
-    url += "&format=" + format;
-    url += "&f=" + f;
-    url += "&studyAreas=" + studyAreas;
-    url += "&token=" + token;
-
-    return url;
-
-  }
-
-  function loadInfoGraphic() {
-
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow"
-    };
-
-    const token = "AAPTxy8BH1VEsoebNVZXo8HurIdz3p260SczOzIA26HzLpx1DvmZTCB6gARrkkrsnzwq10KRe_AC_3HGoPrysBwmHkl50BBQrZClTvypptAz3IDaPwqtQxekFnffLCo3JCsRs5bCNMUiFuqSAfPTqv0fpRJF1ZR_gulfqMSTAdSS-tRU2J3VWybItUcpQUD2hk_fCFIO0UPFhHGSpM_krsAy_7dD9NWoliM-x50Z8qOMrMY7xpHt4Y3Wf1RUBOPwEW7dAT1_Tb3ffdWB";
-
-    let url = buildRequestURL(token, "", "", "html")
-    console.log("URL: " + url);
-
-    fetch(url, requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        console.log("RESULT: " + result);
+      // studyAreas = "[{geometry:{x:-122.3328,y:47.6061}}]";
+      format = "html";
 
 
-        random = "<html><body>hello</body></html>";
-        var doc = document.getElementById('infoFrame').contentWindow.document;
-        doc.open();
-        doc.write(result);
-        doc.close();
+      let url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/createReport?";
+      url += "report=" + report;
+      url += "&format=" + format;
+      url += "&f=" + f;
+      url += "&studyAreas=" + studyAreas;
+      url += "&token=" + token;
 
-      })
-      .catch((error) => console.error(error));
-  }
+      return url;
 
-})  
+    }
+
+    function loadInfoGraphic() {
+      if (!intersectLat || !intersectLong ) {
+        alert('You must have a target area created');
+        return;
+      }
+      
+
+      const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+      };
+
+      const token = "AAPTxy8BH1VEsoebNVZXo8HurIdz3p260SczOzIA26HzLpx1DvmZTCB6gARrkkrsnzwq10KRe_AC_3HGoPrysBwmHkl50BBQrZClTvypptAz3IDaPwqtQxekFnffLCo3JCsRs5bCNMUiFuqSAfPTqv0fpRJF1ZR_gulfqMSTAdSS-tRU2J3VWybItUcpQUD2hk_fCFIO0UPFhHGSpM_krsAy_7dD9NWoliM-x50Z8qOMrMY7xpHt4Y3Wf1RUBOPwEW7dAT1_Tb3ffdWB";
+
+
+      studyAreas = "[{geometry:{x:" + intersectLong + ", y:" + intersectLat + "}, areaType: NetworkServiceArea, bufferUnits: Minutes, bufferRadii: [5,10,20], travel_mode: Trucking}]";
+
+      // studyAreas='[{"geometry":{"x": -122.435, "y": 37.785},"areaType": "NetworkServiceArea","bufferUnits": "Kilometers","bufferRadii": [5,10,15],"travel_mode":"Trucking"}]';
+
+
+      let url = buildRequestURL(token, studyAreas, "", "html")
+      console.log("URL: " + url);
+
+      fetch(url, requestOptions)
+        .then((response) => response.text())
+        .then((result) => {
+          console.log("RESULT: " + result);
+
+          random = "<html><body>hello</body></html>";
+          var doc = document.getElementById('infoFrame').contentWindow.document;
+          doc.open();
+          doc.write(result);
+          doc.close();      
+          
+          modal.open = true;
+
+        })
+        .catch((error) => console.error(error));
+    }
+
+  })  
