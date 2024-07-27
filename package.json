@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@arcgis/map-components": "^4.30.6",
+    "vite": "^5.3.5"
+  }
+}
