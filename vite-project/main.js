@@ -26,8 +26,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   // Object to hold geometries before calculating intersection
   let serviceAreaGeometries = {}
-  
-
 
     //KRISHAANS STUFF
 
@@ -39,28 +37,40 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     const homeElement = document.getElementById('home');
     const workElement = document.getElementById('work');
     const placeElement = document.getElementById('places');
+    const customElement = document.getElementById('custom');
     const infoElement = document.getElementById('info');
+    // gets calcite blocks
+    const homeContainer = document.getElementById('homeContainer');
+    const workContainer = document.getElementById('workContainer');
+    const customContainer = document.getElementById('customContainer');
+    const placesContainer = document.getElementById('placesContainer');
     // gets calcite-input-text elements
     const homeAddressElement = document.getElementById('homeAddress');
     const workAddressElement = document.getElementById('workAddress');
+    const customAddressElement = document.getElementById('customAddress');
     const placeInputElement = document.getElementById('placeInput');
     // gets calcite-slider elements
     const travelTimeEl = document.getElementById('homeSlider');
     const workCommuteTimeEl = document.getElementById('workSlider');
+    const customTimeEl = document.getElementById('customSlider')
     // gets calcite-combobox elements
     const homeTravelTypeEl = document.getElementById('homeTravelType');
     const workTravelTypeEl = document.getElementById('workTravelType');
+    const customTravelTypeEl = document.getElementById('customTravelType')
     // gets reset calcite-button
     const homeResetEl = document.getElementById('resetHome');
     const workResetEl = document.getElementById('resetWork');
+    const customResetEl = document.getElementById('resetCustom')
     // gets run calcite button
     const homeRunEl = document.getElementById('runHome');
     const workRunEl = document.getElementById('runWork');
+    const customRunEl = document.getElementById('runCustom')
     // gets valid address message
     const valHomeAddressEl = document.getElementById("validHomeAddress");
     const valWorkAddressEl = document.getElementById("validWorkAddress");
+    const valCustomAddressEl = document.getElementById("validCustomAddress");
 
-
+    const sheet = document.getElementById("example-sheet");
     const modal = document.getElementById("infomodal");
 
     /**
@@ -73,16 +83,21 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   let homeY;
   let workX;
   let workY;
+  let customX;
+  let customY;
   // text-label inputs
   let homeAddress;
   let workAddress;
+  let customAddress;
   let placeInput;
   // slider inputs
   let travelTime = travelTimeEl.value;
   let workCommuteTime = workCommuteTimeEl.value;
+    let customTime  = customTimeEl.value;
   // grabs combobox inputs --> defaults to Car
   let homeTravelType = homeTravelTypeEl.value;
   let workTravelType = workTravelTypeEl.value;
+  let customTravelType = customTravelTypeEl.value;
   // intersect xoords
   let intersectLat;
   let intersectLong;
@@ -99,6 +114,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       homeContainer.classList.add('hidden');
       workContainer.classList.add('hidden');
       placesContainer.classList.add('hidden');
+      customContainer.classList.add('hidden');
     }
 
     homeElement.addEventListener('click', () => {
@@ -114,6 +130,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     placeElement.addEventListener('click', () => {
       hideAllContainers();
       placesContainer.classList.remove('hidden');
+    });
+
+    customElement.addEventListener('click', () => {
+      hideAllContainers();
+      customContainer.classList.remove('hidden');
     });
 
     infoElement.addEventListener('click', () => {
@@ -138,7 +159,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         valHomeAddressEl.status = "invalid"
         valHomeAddressEl.innerText = "Invalid address!";
       }
-      console.log("place, work, home", placeInput, workAddress, homeAddress);
+      console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
     });
     // Gets Work Address
     workAddressElement.addEventListener('calciteInputTextChange', function (event) {
@@ -152,47 +173,72 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         valWorkAddressEl.status = "invalid"
         valWorkAddressEl.innerText = "Invalid address";
       }
-      console.log("place, work, home", placeInput, workAddress, homeAddress);
+      console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
+  });
+  // Get Custom Address
+  customAddressElement.addEventListener('calciteInputTextChange', function(event) {
+    customAddress = event.target.value;
+    if (customAddress) {
+      valCustomAddressEl.icon="check";
+      valCustomAddressEl.status="valid";
+      valCustomAddressEl.innerText="Place added on map!";
+    } else {
+      valCustomAddressEl.icon="x";
+      valCustomAddressEl.status="invalid"
+      valCustomAddressEl.innerText="Invalid address";
+    }
+    console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
     });
     // Gets place input
     placeInputElement.addEventListener('calciteInputTextChange', function (event) {
       placeInput = event.target.value;
-      console.log("place, work, home", placeInput, workAddress, homeAddress);
+      console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
     });
+  
+  /**
+   * Grabs slider inputs from user
+   */
 
+  // grabs home slider
+  travelTimeEl.addEventListener('calciteSliderChange', function(event) {
+    travelTime = event.target.value;
+    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+  });
+  // grabs work slider
+  workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
+    workCommuteTime = event.target.value;
+    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+  });
+  // grabs custom slider
+  customTimeEl.addEventListener('calciteSliderChange', function(event) {
+    customTime = event.target.value;
+    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+  });
 
-    /**
-     * Grabs slider inputs from user
-     */
+  /**
+   * Grabs combobox info from user
+   */
 
-    // grabs home slider
-    travelTimeEl.addEventListener('calciteSliderChange', function (event) {
-      travelTime = event.target.value;
-      console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
-    });
-    // grabs work slider
-    workCommuteTimeEl.addEventListener('calciteSliderChange', function (event) {
-      workCommuteTime = event.target.value;
-      console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
-    });
+  // grabs home travel type
+  homeTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
+    const val = event.target.value;
+    homeTravelType = val;
+    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+  });
 
-    /**
-     * Grabs combobox info from user
-     */
+  // grabs work travel type
+  workTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
+    const val = event.target.value;
+    workTravelType = val;
+    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+  })
 
-    // grabs home travel type
-    homeTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
-      const val = event.target.value;
-      homeTravelType = val;
-      console.log("home and work travel type", homeTravelType, workTravelType);
-    });
-
-    // grabs work travel type
-    workTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
-      const val = event.target.value;
-      workTravelType = val;
-      console.log("home and work travel type", homeTravelType, workTravelType);
-    })
+  // grabs custom travel typ
+  customTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
+    const val = event.target.value;
+    customTravelType = val;
+    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+  })
 
     /**
      * implements button logic
@@ -234,6 +280,22 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     workCommuteTimeEl.value = 30;
     workCommuteTime = 30;
   });
+  // reset custom button logic
+  customResetEl.addEventListener('click', function() {
+    // reset to graphics layer
+    customGraphicsLayer.removeAll();
+    // clears graphics layer for intersection
+    intersectGraphicsLayer.removeAll();
+    // removes custom address from serviceAreaGeometriesObject
+    delete serviceAreaGeometries.customAddress
+    // reseting logic
+    customAddressElement.value = '';
+    customAddress = undefined;
+    customTravelTypeEl.value = "Driving";
+    customTravelType = "Driving";
+    customTimeEl.value = 30;
+    customTime = 30;
+  });
   // run home button logic
   homeRunEl.addEventListener('click', function() {
     console.log("hit");
@@ -244,6 +306,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     console.log("hit");
     intersectGraphicsLayer.removeAll();
     geocodeWorkAddress();
+  })
+  customRunEl.addEventListener('click', function() {
+    console.log("hit");
+    intersectGraphicsLayer.removeAll();
+    geocodeCustomAddress();
   })
 
 
@@ -296,44 +363,121 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           // Handle any errors
           console.error("Error occurred: ", error);
         });
+  }
 
-
-    }
+  function geocodeCustomAddress(){
+    console.log("Custom address API response")
+    const geocodedUrlwork= `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${customAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
+    fetch(geocodedUrlwork)
+      .then(function(responsec) {
+        if (!responsec.ok) {
+          throw new Error('Network response was not ok ' + responsec.statusText);
+        }
+        return responsec.json();
+      })
+      .then(function(datac) {
+        // Handle the response data
+        console.log("Geocode response for work addy: ", datac);
+        customX = datac.candidates[0]?.location.x;
+        customY = datac.candidates[0]?.location.y;
+        addCustomCoordinate()
+      })
+      .catch(function(error) {
+        // Handle any errors
+        console.error("Error occurred: ", error);
+      });
+  }
 
   // Graphics layers for home, work, and intersection
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
+  const customGraphicsLayer = new GraphicsLayer();
   const intersectGraphicsLayer = new GraphicsLayer();
 
-  workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)"
-  homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)"
+  workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
+  homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
+  customGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
+  map.add(customGraphicsLayer);
 
     /**
      * functions to modify map zoom
      */
     function changeView() {
       // only home coordinates
-      if (!workX && !workY) {
+      // if (!workX && !workY) {
+      //   view.goTo({
+      //     center: [homeX, homeY],
+      //     zoom: 10,
+      //   });
+      //   // only work coordinates
+      // } else if (!homeX && !homeY) {
+      //   view.goTo({
+      //     center: [workX, workY],
+      //     zoom: 10,
+      //   });
+      //   // both work and home coordinates
+      // } else {
+      //   const midLatitude = (homeX + workX) / 2;
+      //   const midLongitude = (homeY + workY) / 2;
+      //   view.goTo({
+      //     center: [midLatitude, midLongitude],
+      //     zoom: 9,
+      //   });
+      // }
+      if (workX && workY && homeX && homeY && customX && customY) {
+        const midLatitude = (homeX + workX + customX) / 3;
+        const midLongitude = (homeY + workY + customY) / 3;
         view.goTo({
-          center: [homeX, homeY],
-          zoom: 10,
+          center: [midLatitude, midLongitude],
+          zoom: 7,
         });
-        // only work coordinates
-      } else if (!homeX && !homeY) {
-        view.goTo({
-          center: [workX, workY],
-          zoom: 10,
-        });
-        // both work and home coordinates
-      } else {
+        // no custom
+      } else if (homeX && homeY && workX && workY) {
         const midLatitude = (homeX + workX) / 2;
         const midLongitude = (homeY + workY) / 2;
         view.goTo({
           center: [midLatitude, midLongitude],
+          zoom: 8,
+        });
+        // no work
+      } else if (homeX && homeY && customX && customY) {
+        const midLatitude = (homeX + customX) / 2;
+        const midLongitude = (homeY + customY) / 2;
+        view.goTo({
+          center: [midLatitude, midLongitude],
+          zoom: 8,
+        });
+        // no home
+      } else if (workX && workY && customX && customY) {
+        const midLatitude = (workX + customX) / 2;
+        const midLongitude = (workY + customY) / 2;
+        view.goTo({
+          center: [midLatitude, midLongitude],
+          zoom: 8,
+        });
+        // only home
+      } else if (homeX && homeY) {
+        view.goTo({
+          center: [homeX, homeY],
           zoom: 9,
         });
+        // only work
+      } else if (workX && workY) {
+        view.goTo({
+          center: [workX, workY],
+          zoom: 9,
+        });
+        // only custom
+      } else if (customX && customY) {
+        view.goTo({
+          center: [customX, customY],
+          zoom: 9,
+        });
+        // should never hit
+      } else {
+        console.error("No valid coordinates provided.");
       }
     }
 
@@ -365,8 +509,41 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       // Service area for home address
       const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4], true)
+      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4], 'home');
 
+      changeView();
+      }
+    }
+
+    // NEED TO ADD LOGIC TO DELETE A POINT
+    function addCustomCoordinate() {
+      if (customX && customY) {
+        customGraphicsLayer.removeAll()
+        // Maybe add something right here to clear 
+        const customPoint = { //Create a point
+          type: "point",
+          longitude: customX,
+          latitude: customY,
+        };
+        const simpleMarkerSymbol = {
+          type: "simple-marker",
+          color: [0, 222, 166],  // Mint Green
+          outline: {
+            color: [255, 255, 255], // White
+            width: 1,
+          }
+        };
+        const pointGraphic = new Graphic({
+          geometry: customPoint,
+          symbol: simpleMarkerSymbol
+        });
+
+        // adds layer and recenters view
+        customGraphicsLayer.add(pointGraphic);
+
+      
+      const customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
+      solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, [0, 222, 166, 0.4], 'custom')
       changeView();
     }
   }
@@ -398,7 +575,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       // Service area for work address
       const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], false )
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], 'work' )
 
 
         changeView();
@@ -421,15 +598,16 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
   // Creates service area polygon and returns graphic layer
-  function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color, isHome) {
+  function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color, type) {
     return serviceArea.solve(url, serviceAreaParams)
       .then(function(result){
         if (result.serviceAreaPolygons.features.length) {
           currentGraphicsLayer.removeAll()
 
           // logic to properly assign home vs work elements of service area geometries
-          isHome ? serviceAreaGeometries.homeGeometry = result.serviceAreaPolygons.features[0].geometry
-          : serviceAreaGeometries.workGeometry = result.serviceAreaPolygons.features[0].geometry
+          type === 'home' ? serviceAreaGeometries.homeGeometry = result.serviceAreaPolygons.features[0].geometry
+          : type === 'work' ? serviceAreaGeometries.workGeometry = result.serviceAreaPolygons.features[0].geometry
+          : serviceAreaGeometries.customGeometry = result.serviceAreaPolygons.features[0].geometry
         
           // run intersection tool only if if there are two service area geometry elements
           if (Object.keys(serviceAreaGeometries).length == 2){

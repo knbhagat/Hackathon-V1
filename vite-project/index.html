@@ -33,6 +33,7 @@
       <calcite-action-bar expand-disabled expanded slot="action-bar">
         <calcite-action id="home" text="Home" icon="home"></calcite-action>
         <calcite-action id="work" text="Work" icon="organization"></calcite-action>
+        <calcite-action id="custom" text="Custom" icon="layers-editable"></calcite-action>
         <calcite-action id="places" text="Places" icon="pins"></calcite-action>
         <calcite-action id="info" text="Info" icon="infographic"></calcite-action>
       </calcite-action-bar>
@@ -74,6 +75,9 @@
           </calcite-label>
           <hr class="mint-hr">
           <calcite-label>
+            Job Description
+          </calcite-label>
+          <calcite-label>
             Travel Mode:
             <calcite-combobox id="workTravelType" value="Driving" placeholder-icon="rural-driving-time"
               placeholder="Travel Mode" selection-mode="single">
@@ -90,6 +94,34 @@
           <div style="display: flex; width: 100%;">
             <calcite-button icon-start="reset" id="resetWork" appearance="outline-fill" width="half">Reset</calcite-button>
             <calcite-button icon-start="play" id="runWork" width="half">Run</calcite-button>
+            </div>
+        </calcite-block>
+
+        <calcite-block open id="customContainer" class="hidden calcite-blocks">
+          <calcite-label>Custom Address:
+            <calcite-input-text icon="pin-tear-f" id="customAddress" placeholder="Address"></calcite-input-text>
+              <calcite-input-message id="validCustomAddress" icon="information" status="idle" scale="m">
+                Please enter an address above!
+              </calcite-input-message>
+          </calcite-label>
+          <hr class="mint-hr">
+          <calcite-label>
+            Travel Mode:
+            <calcite-combobox id="customTravelType" value="Driving" placeholder-icon="rural-driving-time"
+              placeholder="Travel Mode" selection-mode="single">
+              <calcite-combobox-item selected icon="car" value="Driving" text-label="Driving"></calcite-combobox-item>
+              <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
+            </calcite-combobox>
+          </calcite-label>
+          <hr class="mint-hr">
+          <calcite-label>Travel Time (minutes):
+            <calcite-slider id="customSlider" label="Preferred Commute" value="30" label-handles label-ticks
+              ticks="10" min-label="0" max-label="100"></calcite-slider>
+          </calcite-label>
+          <hr class="mint-hr">
+          <div style="display: flex; width: 100%;">
+            <calcite-button icon-start="reset" id="resetCustom" appearance="outline-fill" width="half">Reset</calcite-button>
+            <calcite-button icon-start="play" id="runCustom" width="half">Run</calcite-button>
             </div>
         </calcite-block>
 
