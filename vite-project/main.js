@@ -271,6 +271,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
+  workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)"
+  homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)"
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
 
@@ -329,7 +331,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       
       const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-      const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [212, 152, 214, 0.5])
+      const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4])
 
       // homeGraphicsLayer.add(polygonGraphic)
       changeView();
@@ -361,7 +363,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       workGraphicsLayer.add(pointGraphic);
 
       const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      const workServiceArea = solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
 
       changeView();
     }
