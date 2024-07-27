@@ -209,53 +209,45 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     basemap: "arcgis/topographic" // basemap styles service
   });
   // initialization of map
-  getView(); 
+  let view = new MapView({
+    map: map,
+    center: [-95.7129, 37.0902], // Longitude, latitude
+    zoom: 5, // Zoom level
+    container: "aniket-trial-map" // Div element
+  });
+  
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
 
   /**
-   * functions to modify map
+   * functions to modify map zoom
    */
-  function getView() {
-    let view;
-    // no work or home coordinates
-    if (!homeX && !homeY && !workX && !workY) {
-      view = new MapView({
-        map: map,
-        center: [-95.7129, 37.0902], // Longitude, latitude
-        zoom: 5, // Zoom level
-        container: "aniket-trial-map" // Div element
-      });
+  function changeView() {
       // only home coordinates
-    } else if (!workX && !workY) {
-      view = new MapView({
-        map: map,
+    if (!workX && !workY) {
+      view.goTo({
         center: [homeX, homeY],
-        zoom: 7,
-        container: "aniket-trial-map"
-      })
+        zoom: 11,
+      });
       // only work coordinates
     } else if (!homeX && !homeY) {
-      view = new MapView({
-        map: map,
+      view.goTo({
         center: [workX, workY],
-        zoom: 7,
-        container: "aniket-trial-map"
-      })
+        zoom: 11,
+      });
       // both work and home coordinates
     } else {
       const midLatitude = (homeX + workX) / 2;
       const midLongitude = (homeY + workY) / 2;
-      view = new MapView({
-        map: map,
+      view.goTo({
         center: [midLatitude, midLongitude],
-        zoom: 6,
-        container: "aniket-trial-map"
-      })
+        zoom: 10,
+      });
     }
   }
+
   // NEED TO ADD LOGIC TO DELETE A POINT
   function addHomeCoordinate() {
     if (homeX && homeY) {
@@ -280,7 +272,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       });
       // adds layer and recenters view
       homeGraphicsLayer.add(pointGraphic);
-      getView();
+      changeView();
     }
   }
 
@@ -306,7 +298,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       });
       // adds layer and recenters view
       workGraphicsLayer.add(pointGraphic);
-      getView();
+      changeView();
     }
   }
 })
