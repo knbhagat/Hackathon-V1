@@ -39,7 +39,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // Gets tabs on the left side-panel
     const homeElement = document.getElementById('home');
     const workElement = document.getElementById('work');
-    const placeElement = document.getElementById('places');
+    // const placeElement = document.getElementById('places');
     const customElement = document.getElementById('custom');
     const infoElement = document.getElementById('info');
     // gets calcite blocks
@@ -130,10 +130,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       workContainer.classList.remove('hidden');
     });
 
-    placeElement.addEventListener('click', () => {
-      hideAllContainers();
-      placesContainer.classList.remove('hidden');
-    });
+    // placeElement.addEventListener('click', () => {
+    //   hideAllContainers();
+    //   placesContainer.classList.remove('hidden');
+    // });
 
     customElement.addEventListener('click', () => {
       hideAllContainers();
@@ -755,5 +755,4 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         })
         .catch((error) => console.error(error));
     }
-
   })  
