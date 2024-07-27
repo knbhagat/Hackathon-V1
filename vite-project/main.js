@@ -128,11 +128,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     if (homeAddress) {
       valHomeAddressEl.icon="check";
       valHomeAddressEl.status="valid";
-      valHomeAddressEl.innerText="YURRRR, change this";
+      valHomeAddressEl.innerText="Place added on map!";
     } else {
       valHomeAddressEl.icon="x";
       valHomeAddressEl.status="invalid"
-      valHomeAddressEl.innerText="YURRR, also change this";
+      valHomeAddressEl.innerText="Invalid address!";
     }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
@@ -142,11 +142,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     if (workAddress) {
       valWorkAddressEl.icon="check";
       valWorkAddressEl.status="valid";
-      valWorkAddressEl.innerText="YURRRR, change this";
+      valWorkAddressEl.innerText="Place added on map!";
     } else {
       valWorkAddressEl.icon="x";
       valWorkAddressEl.status="invalid"
-      valWorkAddressEl.innerText="YURRR, also change this";
+      valWorkAddressEl.innerText="Invalid address";
     }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
