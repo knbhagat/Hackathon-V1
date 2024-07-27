@@ -24,8 +24,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     const serviceAreaUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World/solveServiceArea";
 
-    // Object to hold geometries before calculating intersection
-    let serviceAreaGeometries = {}
+  // Object to hold geometries before calculating intersection
+  let serviceAreaGeometries = {}
+  let homeServiceAreaParams;
+  let workServiceAreaParams;
+  let customServiceAreaParams;
 
     //KRISHAANS STUFF
 
@@ -217,100 +220,134 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     /**
      * Grabs combobox info from user
      */
-
     // grabs home travel type
     homeTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
       const val = event.target.value;
       homeTravelType = val;
-      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+      console.log("home travel type", homeTravelType);
     });
 
     // grabs work travel type
     workTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
       const val = event.target.value;
       workTravelType = val;
-      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+      // if (workTravelType == "Walking")
+      // console.log("work travel type", workTravelType);
     })
 
     // grabs custom travel typ
     customTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
       const val = event.target.value;
       customTravelType = val;
-      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+      console.log("custom travel type", customTravelType);
     })
 
+    /**
+     * Travel Mode JSON Objects
+    */
+    const walkingTravelMode = {
+      "attributeParameterValues": [],
+      "description": "Walking Time",
+      "distanceAttributeName": "WalkTime",
+      "id": "caFAwlk",
+      "impedanceAttributeName": "WalkTime",
+      "name": "Walking Time",
+      "restrictions": ["Avoid Private Roads", "Avoid Unpaved Roads"],
+      "simplificationTolerance": 2,
+      "simplificationToleranceUnits": "meters",
+      "type": "walk"
+    };
+
+    
     /**
      * implements button logic
      */
 
-    // reset home button logic
-    homeResetEl.addEventListener('click', function () {
-      console.log("hit")
-      // clears graphics layer for home service area
-      homeGraphicsLayer.removeAll();
-      // clears graphics layer for intersection
-      intersectGraphicsLayer.removeAll();
-      // removes work address from serviceAreaGeometriesObject
-      delete serviceAreaGeometries.homeAddress
+  // reset home button logic
+  homeResetEl.addEventListener('click', function() {
+    console.log("hit")
+    // removes work address from serviceAreaGeometriesObject
+    // clears graphics layer for home service area
+    homeGraphicsLayer.removeAll();
+    // clears graphics layer for intersection
+    intersectGraphicsLayer.removeAll();
+    delete serviceAreaGeometries.homeGeometry;
+    // reseting logic
+    homeAddressElement.value = '';
+    homeAddress = undefined;
+    homeTravelTypeEl.value = "Driving";
+    homeTravelType = "Driving";
+    travelTimeEl.value = 30;
+    travelTime = 30;
+    homeX = undefined;
+    homeY = undefined;
+    if (workX && workY && customX && customY) {
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor);
+    }
+  });
+  // reset work button logic
+  workResetEl.addEventListener('click', function() {
+    console.log("hit")
+    // clears graphics layer for work service area
+    workGraphicsLayer.removeAll();
+    // clears graphics layer for intersection
+    intersectGraphicsLayer.removeAll();
+    // removes work address from serviceAreaGeometriesObject
+    delete serviceAreaGeometries.workGeometry;
+    console.log(serviceAreaGeometries);
 
-      // reseting logic
-      homeAddressElement.value = '';
-      homeAddress = undefined;
-      homeTravelTypeEl.value = "Driving";
-      homeTravelType = "Driving";
-      travelTimeEl.value = 30;
-      travelTime = 30;
-    });
-    // reset work button logic
-    workResetEl.addEventListener('click', function () {
-      console.log("hit")
-      // clears graphics layer for work service area
-      workGraphicsLayer.removeAll();
-      // clears graphics layer for intersection
-      intersectGraphicsLayer.removeAll();
-      // removes work address from serviceAreaGeometriesObject
-      delete serviceAreaGeometries.workAddress
+    // reseting logic
+    workAddressElement.value = '';
+    workAddress = undefined;
+    workTravelTypeEl.value = "Driving";
+    workTravelType = "Driving";
+    workCommuteTimeEl.value = 30;
+    workCommuteTime = 30;
+    workX = undefined;
+    workY = undefined;
+    if (customX && customY && homeX && homeY) {
+      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, homeGraphicColor);
+    }
+  });
+  // reset custom button logic
+  customResetEl.addEventListener('click', function() {
+    // reset to graphics layer
+    customGraphicsLayer.removeAll();
+    // clears graphics layer for intersection
+    intersectGraphicsLayer.removeAll();
+    // removes custom address from serviceAreaGeometriesObject
+    delete serviceAreaGeometries.customGeometry;
+    // reseting logic
+    customAddressElement.value = '';
+    customAddress = undefined;
+    customTravelTypeEl.value = "Driving";
+    customTravelType = "Driving";
+    customTimeEl.value = 30;
+    customTime = 30;
+    customX = undefined;
+    customY = undefined;
 
-      // reseting logic
-      workAddressElement.value = '';
-      workAddress = undefined;
-      workTravelTypeEl.value = "Driving";
-      workTravelType = "Driving";
-      workCommuteTimeEl.value = 30;
-      workCommuteTime = 30;
-    });
-    // reset custom button logic
-    customResetEl.addEventListener('click', function () {
-      // reset to graphics layer
-      customGraphicsLayer.removeAll();
-      // clears graphics layer for intersection
-      intersectGraphicsLayer.removeAll();
-      // removes custom address from serviceAreaGeometriesObject
-      delete serviceAreaGeometries.customAddress
-      // reseting logic
-      customAddressElement.value = '';
-      customAddress = undefined;
-      customTravelTypeEl.value = "Driving";
-      customTravelType = "Driving";
-      customTimeEl.value = 30;
-      customTime = 30;
-    });
-    // run home button logic
-    homeRunEl.addEventListener('click', function () {
-      console.log("hit");
-      intersectGraphicsLayer.removeAll();
-      geocodeHomeAddress();
-    })
-    workRunEl.addEventListener('click', function () {
-      console.log("hit");
-      intersectGraphicsLayer.removeAll();
-      geocodeWorkAddress();
-    })
-    customRunEl.addEventListener('click', function () {
-      console.log("hit");
-      intersectGraphicsLayer.removeAll();
-      geocodeCustomAddress();
-    })
+    if (workX && workY && homeX && homeY) {
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor);
+    }
+
+  });
+  // run home button logic
+  homeRunEl.addEventListener('click', function() {
+    console.log("hit");
+    intersectGraphicsLayer.removeAll();
+    geocodeHomeAddress();
+  })
+  workRunEl.addEventListener('click', function() {
+    console.log("hit");
+    intersectGraphicsLayer.removeAll();
+    geocodeWorkAddress();
+  })
+  customRunEl.addEventListener('click', function() {
+    console.log("hit");
+    intersectGraphicsLayer.removeAll();
+    geocodeCustomAddress();
+  })
 
 
     /**
@@ -387,44 +424,26 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         });
     }
 
-    // Graphics layers for home, work, and intersection
-    const homeGraphicsLayer = new GraphicsLayer();
-    const workGraphicsLayer = new GraphicsLayer();
-    const customGraphicsLayer = new GraphicsLayer();
-    const intersectGraphicsLayer = new GraphicsLayer();
+  // Graphics layers for home, work, and intersection
+  const homeGraphicsLayer = new GraphicsLayer();
+  const homeGraphicColor = [0, 222, 166, 0.4];
+  const workGraphicsLayer = new GraphicsLayer();
+  const workGraphicColor = [66, 135, 245, 0.5];
+  const customGraphicsLayer = new GraphicsLayer();
+  const customGraphicColor = [0, 222, 166, 0.4];
+  const intersectGraphicsLayer = new GraphicsLayer();
+  workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
+  homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
+  customGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
+  map.add(homeGraphicsLayer);
+  map.add(workGraphicsLayer);
+  map.add(customGraphicsLayer);
 
-    workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
-    homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
-    customGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
-    map.add(homeGraphicsLayer);
-    map.add(workGraphicsLayer);
-    map.add(customGraphicsLayer);
 
     /**
      * functions to modify map zoom
      */
     function changeView() {
-      // only home coordinates
-      // if (!workX && !workY) {
-      //   view.goTo({
-      //     center: [homeX, homeY],
-      //     zoom: 10,
-      //   });
-      //   // only work coordinates
-      // } else if (!homeX && !homeY) {
-      //   view.goTo({
-      //     center: [workX, workY],
-      //     zoom: 10,
-      //   });
-      //   // both work and home coordinates
-      // } else {
-      //   const midLatitude = (homeX + workX) / 2;
-      //   const midLongitude = (homeY + workY) / 2;
-      //   view.goTo({
-      //     center: [midLatitude, midLongitude],
-      //     zoom: 9,
-      //   });
-      // }
       if (workX && workY && homeX && homeY && customX && customY) {
         const midLatitude = (homeX + workX + customX) / 3;
         const midLongitude = (homeY + workY + customY) / 3;
@@ -483,6 +502,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // NEED TO ADD LOGIC TO DELETE A POINT
     function addHomeCoordinate() {
       if (homeX && homeY) {
+        console.log("hit home");
         homeGraphicsLayer.removeAll()
         // Maybe add something right here to clear 
         const homePoint = { //Create a point
@@ -505,11 +525,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
         // adds layer and recenters view
         homeGraphicsLayer.add(pointGraphic);
-
         // Service area for home address
-        const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-        solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4], 'home');
-
+        homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
+        solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, homeGraphicColor, 'home');
         changeView();
       }
     }
@@ -517,6 +535,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // NEED TO ADD LOGIC TO DELETE A POINT
     function addCustomCoordinate() {
       if (customX && customY) {
+        console.log("hit custom");
         customGraphicsLayer.removeAll()
         // Maybe add something right here to clear 
         const customPoint = { //Create a point
@@ -539,17 +558,16 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
         // adds layer and recenters view
         customGraphicsLayer.add(pointGraphic);
-
-
-        const customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
-        solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, [0, 222, 166, 0.4], 'custom')
+        customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
+        solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, customGraphicColor, 'custom')
         changeView();
-      }
     }
+  }
 
 
     function addWorkCoordinate() {
       if (workX && workY) {
+        console.log("hit work")
         workGraphicsLayer.removeAll();
 
         const workPoint = { //Create a point
@@ -571,18 +589,15 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         });
         // adds layer and recenters view
         workGraphicsLayer.add(pointGraphic);
-
         // Service area for work address
-        const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-        solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], 'work')
-
-
+        workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference));
+        solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], 'work' );
         changeView();
       }
     }
 
     // Creates parameters for service area function call
-    function createServiceAreaParams(locationGraphic, driveTimeCutoff, outSpatialReference) {
+    function createServiceAreaParams(locationGraphic, driveTimeCutoff, outSpatialReference, travelType) {
       const featureSet = new FeatureSet({
         features: [locationGraphic]
       })
@@ -593,57 +608,63 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         trimOuterPolygon: true,
         outSpatialReference: outSpatialReference
       });
+
+      if(travelType == "Walking" ){
+        taskParameters.travelMode = walkingTravelMode
+      }
+
       return taskParameters;
     }
 
-    // Creates service area polygon and returns graphic layer
-    function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color, type) {
-      return serviceArea.solve(url, serviceAreaParams)
-        .then(function (result) {
-          if (result.serviceAreaPolygons.features.length) {
-            currentGraphicsLayer.removeAll()
+  // Creates service area polygon and returns graphic layer
+  function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color, type) {
+    return serviceArea.solve(url, serviceAreaParams)
+      .then(function(result) {
+        if (result.serviceAreaPolygons.features.length) {
+          currentGraphicsLayer.removeAll()
 
-            // logic to properly assign home vs work elements of service area geometries
+          // logic to properly assign home vs work elements of service area geometries
+          if (type) {
             type === 'home' ? serviceAreaGeometries.homeGeometry = result.serviceAreaPolygons.features[0].geometry
-              : type === 'work' ? serviceAreaGeometries.workGeometry = result.serviceAreaPolygons.features[0].geometry
-                : serviceAreaGeometries.customGeometry = result.serviceAreaPolygons.features[0].geometry
-
-            // run intersection tool only if if there are two service area geometry elements
-            if (Object.keys(serviceAreaGeometries).length == 2) {
-              intersect = geometryEngine.intersect(serviceAreaGeometries.homeGeometry, serviceAreaGeometries.workGeometry)
-
-              intersectLat = intersect.centroid.latitude
-              intersectLong = intersect.centroid.longitude
-              console.log(intersectLat, intersectLong)
-
-              view.goTo({
-                center: [intersectLong, intersectLat],
-                zoom: 10,
-              });
-
-
-              // sends each ring of intersection geometry to funciton to draw polygons
-              for (let index = 0; index < intersect.rings.length; index++) {
-                createIntersectPolygon(intersect, index)
-              }
-
-            }
-
-            // creating filled polygon for each feature of service area, home or work
-            result.serviceAreaPolygons.features.forEach(function (graphic) {
-              graphic.symbol = {
-                type: "simple-fill",
-                color: color
-              }
-              currentGraphicsLayer.add(graphic, 0);
-            });
-
-
+            : type === 'work' ? serviceAreaGeometries.workGeometry = result.serviceAreaPolygons.features[0].geometry
+            : serviceAreaGeometries.customGeometry = result.serviceAreaPolygons.features[0].geometry
           }
-        }, function (error) {
-          console.log(error);
-        });
+          mapInsertPolygon(result, currentGraphicsLayer, color)
+        }
+      }, function(error){
+        console.log(error);
+      });
     }
+
+
+  function mapInsertPolygon(result, currentGraphicsLayer, color) {
+    // run intersection tool only if if there are two/three service area geometry elements
+    if (Object.keys(serviceAreaGeometries).length >= 2) {
+      console.log('serviceAreaGeometries', serviceAreaGeometries);
+      if (Object.keys(serviceAreaGeometries).length === 3) {
+        intersect = geometryEngine.intersect(geometryEngine.intersect(serviceAreaGeometries.homeGeometry, serviceAreaGeometries.customGeometry), serviceAreaGeometries.workGeometry);
+      } else if (serviceAreaGeometries.homeGeometry && serviceAreaGeometries.workGeometry) {
+        intersect = geometryEngine.intersect(serviceAreaGeometries.homeGeometry, serviceAreaGeometries.workGeometry);
+      } else if (serviceAreaGeometries.homeGeometry && serviceAreaGeometries.customGeometry) {
+        intersect = geometryEngine.intersect(serviceAreaGeometries.homeGeometry, serviceAreaGeometries.customGeometry);
+      } else if (serviceAreaGeometries.workGeometry && serviceAreaGeometries.customGeometry) {
+        intersect = geometryEngine.intersect(serviceAreaGeometries.workGeometry, serviceAreaGeometries.customGeometry);
+      }
+      // sends each ring of intersection geometry to funciton to draw polygons
+      for (let index = 0; index < intersect.rings?.length; index++) {
+        createIntersectPolygon(intersect, index)
+      }
+    }
+    
+    // creating filled polygon for each feature of service area, home or work
+    result.serviceAreaPolygons.features.forEach(function(graphic){
+      graphic.symbol = {
+        type: "simple-fill",
+        color: color
+      }
+      currentGraphicsLayer.add(graphic,0);
+    });
+  }
 
     // function to draw polygon for each ring in intersection geometry
     function createIntersectPolygon(intersection, index) {
@@ -659,21 +680,20 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         outline: {
           color: [255, 255, 255],
           width: 1
-        }
-      };
-
-      const polygonGraphic = new Graphic({
-        geometry: intersectionPolygon,
-        symbol: simpleFillSymbol
-      })
-
-      // adds current ring polygon to a graphic layer and adds layer to map
-      intersectGraphicsLayer.add(polygonGraphic)
-      map.add(intersectGraphicsLayer);
-
-    }
-
-    function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
+      }
+    };
+    
+    const polygonGraphic = new Graphic({
+      geometry: intersectionPolygon,
+      symbol: simpleFillSymbol
+    })
+    
+    // adds current ring polygon to a graphic layer and adds layer to map
+    intersectGraphicsLayer.add(polygonGraphic)
+    map.add(intersectGraphicsLayer);
+  }  
+  
+  function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
 
       console.log('study: ' + studyAreas );
 
