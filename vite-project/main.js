@@ -1,26 +1,4 @@
-// import './style.css'
-// import javascriptLogo from './javascript.svg'
-// import viteLogo from '/vite.svg'
-// import { setupCounter } from './counter.js'
 
-// document.querySelector('#app').innerHTML = `
-//   <div>
-//     <a href="https://vitejs.dev" target="_blank">
-//       <img src="${viteLogo}" class="logo" alt="Vite logo" />
-//     </a>
-//     <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-//       <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-//     </a>
-//     <h1>Hello Vite!</h1>
-//     <div class="card">
-//       <button id="counter" type="button"></button>
-//     </div>
-//     <p class="read-the-docs">
-//       Click on the Vite logo to learn more
-//     </p>
-//   </div>
-// `
-// setupCounter(document.querySelector('#counter'));
 
 require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer"], function(esriConfig, Map, MapView, Graphic, GraphicsLayer) {
   //KRISHAANS STUFF
@@ -208,13 +186,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   esriConfig.apiKey = apiKey;
 
   const map = new Map({
-    basemap: "arcgis/topographic" // basemap styles service
+    basemap: "arcgis/human-geography-dark" // basemap styles service
   });
   // initialization of map
   let view = new MapView({
     map: map,
-    center: [-95.7129, 37.0902], // Longitude, latitude
-    zoom: 5, // Zoom level
+    center: [-88.7129, 37.0902], // Longitude, latitude
+    scale: 12500000, // Zoom level
     container: "aniket-trial-map" // Div element
   });
   
@@ -262,7 +240,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       };
       const simpleMarkerSymbol = {
         type: "simple-marker",
-        color: [226, 119, 40],  // Orange
+        color: [0, 222, 166],  // Mint Green
         outline: {
             color: [255, 255, 255], // White
             width: 1,
@@ -288,7 +266,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       };
       const simpleMarkerSymbol = {
         type: "simple-marker",
-        color: [226, 119, 40],  // Orange
+        color: [0, 222, 166],  // Mint Green
         outline: {
             color: [255, 255, 255], // White
             width: 1,

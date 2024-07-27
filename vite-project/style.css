@@ -22,14 +22,14 @@ body{
   margin-block: 0;
 }
 
-.ranger {
+.mint {
   --calcite-color-brand: #00dea6;
     --calcite-color-brand-hover: #00c997;
     --calcite-color-brand-press: #00b386;
     --calcite-color-background: #252927;
     --calcite-color-foreground-1: #282f2c;
     --calcite-color-foreground-2: #2f3633;
-    --calcite-color-foreground-3: #353b38;
+    --calcite-color-foreground-3: #353b38 !important;
     --calcite-color-foreground-current: #588572;
     --calcite-color-info: #38deff;
     --calcite-color-success: #60fc44;
