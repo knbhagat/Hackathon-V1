@@ -699,11 +699,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       let itemid = "8c4eeb44679c422a86fdbb392d81adeb"; // State of the Community custom
 
-      report = '{"token":"' + token + '","url":"https://intern-hackathon.maps.arcgis.com","itemid":"' + itemid + '"}'
+      report = '{"name": "SettleSmart Mapping", "token":"' + token + '","url":"https://intern-hackathon.maps.arcgis.com","itemid":"' + itemid + '"}'
 
       // studyAreas = "[{geometry:{x:-122.3328,y:47.6061}}]";
       format = "html";
-
+      returnType = '{"title" : "SettleSmart Mapping", "item_properties" : ""}'
 
       let url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/createReport?";
       url += "report=" + report;
@@ -731,7 +731,12 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       const token = "AAPTxy8BH1VEsoebNVZXo8HurIdz3p260SczOzIA26HzLpx1DvmZTCB6gARrkkrsnzwq10KRe_AC_3HGoPrysBwmHkl50BBQrZClTvypptAz3IDaPwqtQxekFnffLCo3JCsRs5bCNMUiFuqSAfPTqv0fpRJF1ZR_gulfqMSTAdSS-tRU2J3VWybItUcpQUD2hk_fCFIO0UPFhHGSpM_krsAy_7dD9NWoliM-x50Z8qOMrMY7xpHt4Y3Wf1RUBOPwEW7dAT1_Tb3ffdWB";
 
 
-      studyAreas = "[{geometry:{x:" + intersectLong + ", y:" + intersectLat + "}, areaType: NetworkServiceArea, bufferUnits: Minutes, bufferRadii: [5,10,20], travel_mode: Trucking}]";
+      studyAreas = "[{geometry:{x:" + intersectLong + ", y:" + intersectLat + "}"
+        + ", areaType: NetworkServiceArea"
+        + ", bufferUnits: Minutes"
+        + ", bufferRadii: [5,10,20]"
+        + ", travel_mode: Trucking"
+        + ", attributes:{id:'the id',name:'Optional Name 1'}}]";
 
       // studyAreas='[{"geometry":{"x": -122.435, "y": 37.785},"areaType": "NetworkServiceArea","bufferUnits": "Kilometers","bufferRadii": [5,10,15],"travel_mode":"Trucking"}]';
 
