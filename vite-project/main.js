@@ -59,8 +59,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   let workAddress;
   let placeInput;
   // slider inputs
-  let travelTime;
-  let workCommuteTime;
+  let travelTime = travelTimeEl.value;
+  let workCommuteTime = workCommuteTimeEl.value;
   // grabs combobox inputs --> defaults to Car
   let travelType = "Car";
 
@@ -127,11 +127,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   // grabs home slider
   travelTimeEl.addEventListener('calciteSliderChange', function(event) {
+    console.log("original home commute time", travelTime)
     travelTime = event.target.value;
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime)
   });
   // grabs work slider
   workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
+    console.log("original work commute time", workCommuteTime)
     workCommuteTime = event.target.value;
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
   });
@@ -229,13 +231,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     if (!workX && !workY) {
       view.goTo({
         center: [homeX, homeY],
-        zoom: 11,
+        zoom: 10,
       });
       // only work coordinates
     } else if (!homeX && !homeY) {
       view.goTo({
         center: [workX, workY],
-        zoom: 11,
+        zoom: 10,
       });
       // both work and home coordinates
     } else {
@@ -243,7 +245,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       const midLongitude = (homeY + workY) / 2;
       view.goTo({
         center: [midLatitude, midLongitude],
-        zoom: 10,
+        zoom: 9,
       });
     }
   }
