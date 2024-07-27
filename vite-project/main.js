@@ -198,17 +198,21 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   const view = new MapView({
     map: map,
-    center: [-118.805, 34.027], // Longitude, latitude
+    center: [-95.7129, 37.0902], // Longitude, latitude
     zoom: 5, // Zoom level
     container: "aniket-trial-map" // Div element
   });
 
-  const graphicsLayer = new GraphicsLayer();
-  map.add(graphicsLayer);
+  const homeGraphicsLayer = new GraphicsLayer();
+  const workGraphicsLayer = new GraphicsLayer();
+  map.add(homeGraphicsLayer);
+  map.add(workGraphicsLayer);
 
   // NEED TO ADD LOGIC TO DELETE A POINT
   function addHomeCoordinate() {
     if (homeX && homeY) {
+      homeGraphicsLayer.removeAll()
+      // Maybe add something right here to clear 
       const point = { //Create a point
         type: "point",
         longitude: homeX,
@@ -226,7 +230,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         geometry: point,
         symbol: simpleMarkerSymbol
       });
-      graphicsLayer.add(pointGraphic);
+      homeGraphicsLayer.add(pointGraphic);
     }
   }
 
@@ -250,7 +254,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         geometry: pointw,
         symbol: simpleMarkerSymbol
       });
-      graphicsLayer.add(pointGraphic);
+      workGraphicsLayer.add(pointGraphic);
     }
   }
 
