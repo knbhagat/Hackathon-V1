@@ -400,23 +400,100 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     return taskParameters;
   }
 
-  // Creates service area polygon and returns graphic layer
-  function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color) {
-    return serviceArea.solve(url, serviceAreaParams)
-      .then(function(result){
-        if (result.serviceAreaPolygons.features.length) {
-          currentGraphicsLayer.removeAll()
-          // Draw each service area polygon
-          result.serviceAreaPolygons.features.forEach(function(graphic){
-            graphic.symbol = {
-              type: "simple-fill",
-              color: color
-            }
-            currentGraphicsLayer.add(graphic,0);
-          });
-        }
-      }, function(error){
-        console.log(error);
-      });
-  }
-})
+    // Creates service area polygon and returns graphic layer
+    function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color) {
+      return serviceArea.solve(url, serviceAreaParams)
+        .then(function (result) {
+          if (result.serviceAreaPolygons.features.length) {
+            currentGraphicsLayer.removeAll()
+            // Draw each service area polygon
+            result.serviceAreaPolygons.features.forEach(function (graphic) {
+              graphic.symbol = {
+                type: "simple-fill",
+                color: color
+              }
+              currentGraphicsLayer.add(graphic, 0);
+            });
+          }
+        }, function (error) {
+          console.log(error);
+        });
+    }
+
+
+
+    function buildRequestURL(token, studyAreas, report, format, eportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData='{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
+      let itemid = "ca02fc5f2390457e8ef20029e627dc31"; // Race and Age Profile Dark Theme (Esri 2024)
+      itemid = "6679ef4321494048bdb6a6d163cdecb4"; // Community Profile Hackathon
+      report='{"itemid":"6679ef4321494048bdb6a6d163cdecb4","url":"intern-hackathon.maps.arcgis.com"}'
+
+
+      studyAreas = '[{"geometry":{"x":-122.3328,"y":47.6061}}]';
+      // report = "dandi";
+      token = "AAPTxy8BH1VEsoebNVZXo8HurIdz3p260SczOzIA26HzLpx1DvmZTCB6gARrkkrsnzwq10KRe_AC_3HGoPrysBwmHkl50BBQrZClTvypptAz3IDaPwqtQxekFnffLCo3JCsRs5bCNMUiFuqSAfPTqv0fpRJF1ZR_gulfqMSTAdSS-tRU2J3VWybItUcpQUD2hk_fCFIO0UPFhHGSpM_krsAy_7dD9NWoliM-x50Z8qOMrMY7xpHt4Y3Wf1RUBOPwEW7dAT1_Tb3ffdWB";
+      format = "html";
+
+
+      let url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/createReport?";
+      url += "report=" + report;
+      url += "&format=" + format;
+      url += "&f=" + f;
+      url += "&studyAreas=" + studyAreas;
+      url += "&token=" + token;
+
+      console.log("URL");
+      console.log(url);
+
+      return url;
+
+    }
+
+    function loadInfoGraphic() {
+
+      const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+      };
+
+
+      let itemid = "ca02fc5f2390457e8ef20029e627dc31"; // Race and Age Profile Dark Theme (Esri 2024)
+      // itemid = "6679ef4321494048bdb6a6d163cdecb4"; // Community Profile Hackathon
+      // itemid = "537230b385fb45d9a8d6e59265e36fbf"; // Transportation to Work
+      const token = "AAPTxy8BH1VEsoebNVZXo8HurIdz3p260SczOzIA26HzLpx1DvmZTCB6gARrkkrsnzwq10KRe_AC_3HGoPrysBwmHkl50BBQrZClTvypptAz3IDaPwqtQxekFnffLCo3JCsRs5bCNMUiFuqSAfPTqv0fpRJF1ZR_gulfqMSTAdSS-tRU2J3VWybItUcpQUD2hk_fCFIO0UPFhHGSpM_krsAy_7dD9NWoliM-x50Z8qOMrMY7xpHt4Y3Wf1RUBOPwEW7dAT1_Tb3ffdWB";
+      const format = "html";
+      const studyAreas = '[{"geometry":{"x":-122.3328,"y":47.6061}}]';
+
+      const url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/createReport?report={\"itemid\":\""
+        + itemid + "\"}"
+        + "&format=" + format
+        + "&f=bin"
+        + "&studyAreas=" + studyAreas
+        + "&token=" + token;
+
+      // let url = buildRequestURL(token, "","","html")
+      console.log(url);
+
+      fetch(url, requestOptions)
+        .then((response) => response.text())
+        .then((result) => {
+          console.log("RESULT: " + result);
+
+
+          random = "<html><body>hello</body></html>";
+          var doc = document.getElementById('infoFrame').contentWindow.document;
+          doc.open();
+          doc.write(result);
+          doc.close();
+
+
+
+          var doc2 = document.getElementById('infoFrame2').contentWindow.document;
+          doc2.open();
+          doc2.write(random);
+          doc2.close();
+
+
+        })
+        .catch((error) => console.error(error));
+    }
+  })
