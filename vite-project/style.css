@@ -1,3 +1,7 @@
 .hidden {
   display: none;
 }
+
+.shift-map-over {
+  padding-left: 440px;
+}
