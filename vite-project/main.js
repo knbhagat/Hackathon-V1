@@ -2,7 +2,7 @@
 
 require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer", "esri/rest/serviceArea",
   "esri/rest/support/ServiceAreaParameters",
-  "esri/rest/support/FeatureSet",], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet) {
+  "esri/rest/support/FeatureSet", "esri/geometry/geometryEngine"], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet, geometryEngine) {
 
 
   // Put all API config at start
@@ -23,6 +23,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   });
 
   const serviceAreaUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World/solveServiceArea";
+
+  // Object to hold geometries before calculating intersection
+  let serviceAreaGeometries = {}
+  
 
 
   //KRISHAANS STUFF
@@ -73,6 +77,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // grabs combobox inputs --> defaults to Car
   let homeTravelType = homeTravelTypeEl.value;
   let workTravelType = workTravelTypeEl.value;
+  let intersect;
 
   
 
@@ -165,8 +170,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // reset home button logic
   homeResetEl.addEventListener('click', function() {
     console.log("hit")
-    // reset to graphics layer
+    // clears graphics layer for home service area
     homeGraphicsLayer.removeAll();
+    // clears graphics layer for intersection
+    intersectGraphicsLayer.removeAll();
+    // removes work address from serviceAreaGeometriesObject
+    delete serviceAreaGeometries.homeAddress
+
     // reseting logic
     homeAddressElement.value = '';
     homeAddress = undefined;
@@ -178,8 +188,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // reset work button logic
   workResetEl.addEventListener('click', function() {
     console.log("hit")
-    // reset to graphics layer
+    // clears graphics layer for work service area
     workGraphicsLayer.removeAll();
+    // clears graphics layer for intersection
+    intersectGraphicsLayer.removeAll();
+    // removes work address from serviceAreaGeometriesObject
+    delete serviceAreaGeometries.workAddress
+
     // reseting logic
     workAddressElement.value = '';
     workAddress = undefined;
@@ -191,14 +206,14 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // run home button logic
   homeRunEl.addEventListener('click', function() {
     console.log("hit");
+    intersectGraphicsLayer.removeAll();
     geocodeHomeAddress();
   })
   workRunEl.addEventListener('click', function() {
     console.log("hit");
+    intersectGraphicsLayer.removeAll();
     geocodeWorkAddress();
   })
-
-  /////aniket
 
 
   /**
@@ -250,13 +265,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         // Handle any errors
         console.error("Error occurred: ", error);
       });
-
-
   }
 
-
+  // Graphics layers for home, work, and intersection
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
+  const intersectGraphicsLayer = new GraphicsLayer();
+
   workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)"
   homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)"
   map.add(homeGraphicsLayer);
@@ -315,14 +330,14 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       // adds layer and recenters view
       homeGraphicsLayer.add(pointGraphic);
 
-      
+      // Service area for home address
       const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-      const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4])
+      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4], true)
 
-      // homeGraphicsLayer.add(polygonGraphic)
       changeView();
     }
   }
+
 
   function addWorkCoordinate() {
     if (workX && workY) {
@@ -348,8 +363,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       // adds layer and recenters view
       workGraphicsLayer.add(pointGraphic);
 
+      // Service area for work address
       const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], false )
+
 
       changeView();
     }
@@ -371,12 +388,28 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   }
 
   // Creates service area polygon and returns graphic layer
-  function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color) {
+  function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color, isHome) {
     return serviceArea.solve(url, serviceAreaParams)
       .then(function(result){
         if (result.serviceAreaPolygons.features.length) {
           currentGraphicsLayer.removeAll()
-          // Draw each service area polygon
+
+          // logic to properly assign home vs work elements of service area geometries
+          isHome ? serviceAreaGeometries.homeGeometry = result.serviceAreaPolygons.features[0].geometry
+          : serviceAreaGeometries.workGeometry = result.serviceAreaPolygons.features[0].geometry
+        
+          // run intersection tool only if if there are two service area geometry elements
+          if (Object.keys(serviceAreaGeometries).length == 2){
+            intersect = geometryEngine.intersect(serviceAreaGeometries.homeGeometry, serviceAreaGeometries.workGeometry)
+
+            // sends each ring of intersection geometry to funciton to draw polygons
+            for (let index = 0; index < intersect.rings.length; index++) {
+              createIntersectPolygon(intersect, index)
+            }
+
+          }
+          
+          // creating filled polygon for each feature of service area, home or work
           result.serviceAreaPolygons.features.forEach(function(graphic){
             graphic.symbol = {
               type: "simple-fill",
@@ -384,9 +417,41 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
             }
             currentGraphicsLayer.add(graphic,0);
           });
+
+
         }
       }, function(error){
         console.log(error);
       });
   }
-})
+
+  // function to draw polygon for each ring in intersection geometry
+  function createIntersectPolygon(intersection, index){
+
+    const intersectionPolygon = {
+      type: "polygon", 
+      rings: [intersection.rings[index]]
+    }
+    
+    const simpleFillSymbol = {
+      type: "simple-fill",
+      color: [227, 139, 79, 0.2],  // Orange, opacity 80%
+      outline: {
+          color: [255, 255, 255],
+          width: 1
+      }
+    };
+    
+    const polygonGraphic = new Graphic({
+      geometry: intersectionPolygon,
+      symbol: simpleFillSymbol
+    })
+    
+    // adds current ring polygon to a graphic layer and adds layer to map
+    intersectGraphicsLayer.add(polygonGraphic)
+    map.add(intersectGraphicsLayer);
+
+  }  
+  
+  
+})  
