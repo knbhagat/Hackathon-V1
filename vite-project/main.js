@@ -1,26 +1,4 @@
-// import './style.css'
-// import javascriptLogo from './javascript.svg'
-// import viteLogo from '/vite.svg'
-// import { setupCounter } from './counter.js'
 
-// document.querySelector('#app').innerHTML = `
-//   <div>
-//     <a href="https://vitejs.dev" target="_blank">
-//       <img src="${viteLogo}" class="logo" alt="Vite logo" />
-//     </a>
-//     <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-//       <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-//     </a>
-//     <h1>Hello Vite!</h1>
-//     <div class="card">
-//       <button id="counter" type="button"></button>
-//     </div>
-//     <p class="read-the-docs">
-//       Click on the Vite logo to learn more
-//     </p>
-//   </div>
-// `
-// setupCounter(document.querySelector('#counter'));
 
 require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer", "esri/rest/serviceArea",
   "esri/rest/support/ServiceAreaParameters",
@@ -65,7 +43,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   const travelTimeEl = document.getElementById('homeSlider');
   const workCommuteTimeEl = document.getElementById('workSlider');
   // gets calcite-combobox elements
-  const travelTypeEl = document.getElementById('travelType');
+  const homeTravelTypeEl = document.getElementById('homeTravelType');
+  const workTravelTypeEl = document.getElementById('workTravelType');
 
   /**
    * Global variables
@@ -82,10 +61,12 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   let workAddress;
   let placeInput;
   // slider inputs
-  let travelTime;
-  let workCommuteTime;
+  let travelTime = travelTimeEl.value;
+  let workCommuteTime = workCommuteTimeEl.value;
   // grabs combobox inputs --> defaults to Car
-  let travelType = "Car";
+  let homeTravelType = homeTravelTypeEl.value;
+  let workTravelType = workTravelTypeEl.value;
+  
 
   /**
    * For side panels rendering configuration blocks
@@ -120,13 +101,22 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // Gets Home Address
   homeAddressElement.addEventListener('calciteInputTextChange', function(event) {
     homeAddress = event.target.value;
-    geocodeHomeAddress(homeAddress);
+    if (homeAddress) {
+      geocodeHomeAddress(homeAddress);
+    } else {
+      homeGraphicsLayer.removeAll();
+    }
+   
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
   // Gets Work Address
   workAddressElement.addEventListener('calciteInputTextChange', function(event) {
     workAddress = event.target.value;
-    geocodeWorkAddress(homeAddress);
+    if (workAddress) {
+      geocodeWorkAddress(homeAddress);
+    } else {
+      workGraphicsLayer.removeAll();
+    }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
   // Gets place input
@@ -144,14 +134,18 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   // grabs home slider
   travelTimeEl.addEventListener('calciteSliderChange', function(event) {
+    console.log("original home commute time", travelTime)
     travelTime = event.target.value;
 
     plotHomeServiceArea()
 
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime)
+    console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
+    addHomeCoordinate();
   });
   // grabs work slider
   workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
+    console.log("original work commute time", workCommuteTime)
     workCommuteTime = event.target.value;
 
     // create service area()
@@ -164,11 +158,18 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
    */
 
   // grabs home travel type
-  travelTypeEl.addEventListener('calciteComboboxChange', function(event) {
+  homeTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
     const val = event.target.value;
-    travelType = val;
-    console.log("travelType", travelType);
+    homeTravelType = val;
+    console.log("home and work travel type", homeTravelType, workTravelType);
   });
+
+  // grabs work travel type
+  workTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
+    const val = event.target.value;
+    workTravelType = val;
+    console.log("home and work travel type", homeTravelType, workTravelType);
+  })
 
   /////aniket
 
@@ -227,11 +228,39 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   }
 
 
-
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
+  // const homePolyGraphicsLayer = new GraphicsLayer();
+  const workPolyGraphicsLayer = new GraphicsLayer();
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
+
+  /**
+   * functions to modify map zoom
+   */
+  function changeView() {
+      // only home coordinates
+    if (!workX && !workY) {
+      view.goTo({
+        center: [homeX, homeY],
+        zoom: 10,
+      });
+      // only work coordinates
+    } else if (!homeX && !homeY) {
+      view.goTo({
+        center: [workX, workY],
+        zoom: 10,
+      });
+      // both work and home coordinates
+    } else {
+      const midLatitude = (homeX + workX) / 2;
+      const midLongitude = (homeY + workY) / 2;
+      view.goTo({
+        center: [midLatitude, midLongitude],
+        zoom: 9,
+      });
+    }
+  }
 
   // NEED TO ADD LOGIC TO DELETE A POINT
   function addHomeCoordinate() {
@@ -245,7 +274,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       };
       const simpleMarkerSymbol = {
         type: "simple-marker",
-        color: [226, 119, 40],  // Orange
+        color: [0, 222, 166],  // Mint Green
         outline: {
             color: [255, 255, 255], // White
             width: 1,
@@ -255,16 +284,49 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         geometry: point,
         symbol: simpleMarkerSymbol
       });
+
+      const polygon = { //Create a point
+        type: "polygon",
+        rings: 
+        // polygon sample
+        [
+        [homeX + 2, homeY],
+        [homeX, homeY + 2],
+        [homeX, homeY - 2],
+        [homeX - 2, homeY],
+        ]
+      };
+
+      const simpleFillSymbol = {
+          type: "simple-fill",
+          color: [227, 139, 79, 0.8],  // Orange, opacity 80%
+          outline: {
+              color: [255, 255, 255],
+              width: 1
+          }
+      };
+    
+      const polygonGraphic = new Graphic({
+          geometry: polygon,
+          symbol: simpleFillSymbol,
+      
+      });
+
+      // adds layer and recenters view
       homeGraphicsLayer.add(pointGraphic);
+
       
       // Hardcoding a service area with 15 minute drive time
       const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
       const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, "#788496" )
+
+      // homeGraphicsLayer.add(polygonGraphic)
+      changeView();
+
     }
 
 
   }
-
 
   function addWorkCoordinate() {
     if (workX && workY) {
@@ -276,7 +338,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       };
       const simpleMarkerSymbol = {
         type: "simple-marker",
-        color: [226, 119, 40],  // Orange
+        color: [0, 222, 166],  // Mint Green
         outline: {
             color: [255, 255, 255], // White
             width: 1,
@@ -286,11 +348,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         geometry: pointw,
         symbol: simpleMarkerSymbol
       });
+      // adds layer and recenters view
       workGraphicsLayer.add(pointGraphic);
 
       const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      const workServiceArea = solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, "#ff6ee4" )
+      const workServiceArea = solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
 
+      changeView();
     }
   }
 
