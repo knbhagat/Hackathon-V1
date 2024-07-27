@@ -97,13 +97,21 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // Gets Home Address
   homeAddressElement.addEventListener('calciteInputTextChange', function(event) {
     homeAddress = event.target.value;
-    geocodeHomeAddress(homeAddress);
+    if (homeAddress) {
+      geocodeHomeAddress(homeAddress);
+    } else {
+      homeGraphicsLayer.removeAll();
+    }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
   // Gets Work Address
   workAddressElement.addEventListener('calciteInputTextChange', function(event) {
     workAddress = event.target.value;
-    geocodeWorkAddress(homeAddress);
+    if (workAddress) {
+      geocodeWorkAddress(homeAddress);
+    } else {
+      workGraphicsLayer.removeAll();
+    }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
   // Gets place input
@@ -200,19 +208,54 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   const map = new Map({
     basemap: "arcgis/topographic" // basemap styles service
   });
-
-  const view = new MapView({
-    map: map,
-    center: [-95.7129, 37.0902], // Longitude, latitude
-    zoom: 5, // Zoom level
-    container: "aniket-trial-map" // Div element
-  });
-
+  // initialization of map
+  getView(); 
   const homeGraphicsLayer = new GraphicsLayer();
   const workGraphicsLayer = new GraphicsLayer();
   map.add(homeGraphicsLayer);
   map.add(workGraphicsLayer);
 
+  /**
+   * functions to modify map
+   */
+  function getView() {
+    let view;
+    // no work or home coordinates
+    if (!homeX && !homeY && !workX && !workY) {
+      view = new MapView({
+        map: map,
+        center: [-95.7129, 37.0902], // Longitude, latitude
+        zoom: 5, // Zoom level
+        container: "aniket-trial-map" // Div element
+      });
+      // only home coordinates
+    } else if (!workX && !workY) {
+      view = new MapView({
+        map: map,
+        center: [homeX, homeY],
+        zoom: 7,
+        container: "aniket-trial-map"
+      })
+      // only work coordinates
+    } else if (!homeX && !homeY) {
+      view = new MapView({
+        map: map,
+        center: [workX, workY],
+        zoom: 7,
+        container: "aniket-trial-map"
+      })
+      // both work and home coordinates
+    } else {
+      const midLatitude = (homeX + workX) / 2;
+      const midLongitude = (homeY + workY) / 2;
+      view = new MapView({
+        map: map,
+        center: [midLatitude, midLongitude],
+        zoom: 6,
+        container: "aniket-trial-map"
+      })
+    }
+  }
   // NEED TO ADD LOGIC TO DELETE A POINT
   function addHomeCoordinate() {
     if (homeX && homeY) {
@@ -235,10 +278,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         geometry: point,
         symbol: simpleMarkerSymbol
       });
+      // adds layer and recenters view
       homeGraphicsLayer.add(pointGraphic);
+      getView();
     }
   }
-
 
   function addWorkCoordinate() {
     if (workX && workY) {
@@ -260,7 +304,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         geometry: pointw,
         symbol: simpleMarkerSymbol
       });
+      // adds layer and recenters view
       workGraphicsLayer.add(pointGraphic);
+      getView();
     }
   }
 })
