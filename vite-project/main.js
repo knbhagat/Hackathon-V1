@@ -24,8 +24,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     const serviceAreaUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World/solveServiceArea";
 
-  // Object to hold geometries before calculating intersection
-  let serviceAreaGeometries = {}
+    // Object to hold geometries before calculating intersection
+    let serviceAreaGeometries = {}
 
     //KRISHAANS STUFF
 
@@ -77,33 +77,33 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
      * Global variables
      */
 
-  
-  // coordinates used for mapping
-  let homeX;
-  let homeY;
-  let workX;
-  let workY;
-  let customX;
-  let customY;
-  // text-label inputs
-  let homeAddress;
-  let workAddress;
-  let customAddress;
-  let placeInput;
-  // slider inputs
-  let travelTime = travelTimeEl.value;
-  let workCommuteTime = workCommuteTimeEl.value;
-    let customTime  = customTimeEl.value;
-  // grabs combobox inputs --> defaults to Car
-  let homeTravelType = homeTravelTypeEl.value;
-  let workTravelType = workTravelTypeEl.value;
-  let customTravelType = customTravelTypeEl.value;
-  // intersect xoords
-  let intersectLat;
-  let intersectLong;
-  let intersect;
 
-  
+    // coordinates used for mapping
+    let homeX;
+    let homeY;
+    let workX;
+    let workY;
+    let customX;
+    let customY;
+    // text-label inputs
+    let homeAddress;
+    let workAddress;
+    let customAddress;
+    let placeInput;
+    // slider inputs
+    let travelTime = travelTimeEl.value;
+    let workCommuteTime = workCommuteTimeEl.value;
+    let customTime = customTimeEl.value;
+    // grabs combobox inputs --> defaults to Car
+    let homeTravelType = homeTravelTypeEl.value;
+    let workTravelType = workTravelTypeEl.value;
+    let customTravelType = customTravelTypeEl.value;
+    // intersect xoords
+    let intersectLat;
+    let intersectLong;
+    let intersect;
+
+
 
     /**
      * For side panels rendering configuration blocks
@@ -139,7 +139,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     infoElement.addEventListener('click', () => {
       loadInfoGraphic();
-      modal.open = true;
     });
 
     /**
@@ -174,144 +173,144 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         valWorkAddressEl.innerText = "Invalid address";
       }
       console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
-  });
-  // Get Custom Address
-  customAddressElement.addEventListener('calciteInputTextChange', function(event) {
-    customAddress = event.target.value;
-    if (customAddress) {
-      valCustomAddressEl.icon="check";
-      valCustomAddressEl.status="valid";
-      valCustomAddressEl.innerText="Place added on map!";
-    } else {
-      valCustomAddressEl.icon="x";
-      valCustomAddressEl.status="invalid"
-      valCustomAddressEl.innerText="Invalid address";
-    }
-    console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
+    });
+    // Get Custom Address
+    customAddressElement.addEventListener('calciteInputTextChange', function (event) {
+      customAddress = event.target.value;
+      if (customAddress) {
+        valCustomAddressEl.icon = "check";
+        valCustomAddressEl.status = "valid";
+        valCustomAddressEl.innerText = "Place added on map!";
+      } else {
+        valCustomAddressEl.icon = "x";
+        valCustomAddressEl.status = "invalid"
+        valCustomAddressEl.innerText = "Invalid address";
+      }
+      console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
     });
     // Gets place input
     placeInputElement.addEventListener('calciteInputTextChange', function (event) {
       placeInput = event.target.value;
       console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
     });
-  
-  /**
-   * Grabs slider inputs from user
-   */
 
-  // grabs home slider
-  travelTimeEl.addEventListener('calciteSliderChange', function(event) {
-    travelTime = event.target.value;
-    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
-  });
-  // grabs work slider
-  workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
-    workCommuteTime = event.target.value;
-    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
-  });
-  // grabs custom slider
-  customTimeEl.addEventListener('calciteSliderChange', function(event) {
-    customTime = event.target.value;
-    console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
-  });
+    /**
+     * Grabs slider inputs from user
+     */
 
-  /**
-   * Grabs combobox info from user
-   */
+    // grabs home slider
+    travelTimeEl.addEventListener('calciteSliderChange', function (event) {
+      travelTime = event.target.value;
+      console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+    });
+    // grabs work slider
+    workCommuteTimeEl.addEventListener('calciteSliderChange', function (event) {
+      workCommuteTime = event.target.value;
+      console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+    });
+    // grabs custom slider
+    customTimeEl.addEventListener('calciteSliderChange', function (event) {
+      customTime = event.target.value;
+      console.log("travelTime, workCommuteTime, customTime", travelTime, workCommuteTime, customTime);
+    });
 
-  // grabs home travel type
-  homeTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
-    const val = event.target.value;
-    homeTravelType = val;
-    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
-  });
+    /**
+     * Grabs combobox info from user
+     */
 
-  // grabs work travel type
-  workTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
-    const val = event.target.value;
-    workTravelType = val;
-    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
-  })
+    // grabs home travel type
+    homeTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
+      const val = event.target.value;
+      homeTravelType = val;
+      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+    });
 
-  // grabs custom travel typ
-  customTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
-    const val = event.target.value;
-    customTravelType = val;
-    console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
-  })
+    // grabs work travel type
+    workTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
+      const val = event.target.value;
+      workTravelType = val;
+      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+    })
+
+    // grabs custom travel typ
+    customTravelTypeEl.addEventListener('calciteComboboxChange', function (event) {
+      const val = event.target.value;
+      customTravelType = val;
+      console.log("home and work travel and custom type", homeTravelType, workTravelType, customTravelType);
+    })
 
     /**
      * implements button logic
      */
 
-  // reset home button logic
-  homeResetEl.addEventListener('click', function() {
-    console.log("hit")
-    // clears graphics layer for home service area
-    homeGraphicsLayer.removeAll();
-    // clears graphics layer for intersection
-    intersectGraphicsLayer.removeAll();
-    // removes work address from serviceAreaGeometriesObject
-    delete serviceAreaGeometries.homeAddress
+    // reset home button logic
+    homeResetEl.addEventListener('click', function () {
+      console.log("hit")
+      // clears graphics layer for home service area
+      homeGraphicsLayer.removeAll();
+      // clears graphics layer for intersection
+      intersectGraphicsLayer.removeAll();
+      // removes work address from serviceAreaGeometriesObject
+      delete serviceAreaGeometries.homeAddress
 
-    // reseting logic
-    homeAddressElement.value = '';
-    homeAddress = undefined;
-    homeTravelTypeEl.value = "Driving";
-    homeTravelType = "Driving";
-    travelTimeEl.value = 30;
-    travelTime = 30;
-  });
-  // reset work button logic
-  workResetEl.addEventListener('click', function() {
-    console.log("hit")
-    // clears graphics layer for work service area
-    workGraphicsLayer.removeAll();
-    // clears graphics layer for intersection
-    intersectGraphicsLayer.removeAll();
-    // removes work address from serviceAreaGeometriesObject
-    delete serviceAreaGeometries.workAddress
+      // reseting logic
+      homeAddressElement.value = '';
+      homeAddress = undefined;
+      homeTravelTypeEl.value = "Driving";
+      homeTravelType = "Driving";
+      travelTimeEl.value = 30;
+      travelTime = 30;
+    });
+    // reset work button logic
+    workResetEl.addEventListener('click', function () {
+      console.log("hit")
+      // clears graphics layer for work service area
+      workGraphicsLayer.removeAll();
+      // clears graphics layer for intersection
+      intersectGraphicsLayer.removeAll();
+      // removes work address from serviceAreaGeometriesObject
+      delete serviceAreaGeometries.workAddress
 
-    // reseting logic
-    workAddressElement.value = '';
-    workAddress = undefined;
-    workTravelTypeEl.value = "Driving";
-    workTravelType = "Driving";
-    workCommuteTimeEl.value = 30;
-    workCommuteTime = 30;
-  });
-  // reset custom button logic
-  customResetEl.addEventListener('click', function() {
-    // reset to graphics layer
-    customGraphicsLayer.removeAll();
-    // clears graphics layer for intersection
-    intersectGraphicsLayer.removeAll();
-    // removes custom address from serviceAreaGeometriesObject
-    delete serviceAreaGeometries.customAddress
-    // reseting logic
-    customAddressElement.value = '';
-    customAddress = undefined;
-    customTravelTypeEl.value = "Driving";
-    customTravelType = "Driving";
-    customTimeEl.value = 30;
-    customTime = 30;
-  });
-  // run home button logic
-  homeRunEl.addEventListener('click', function() {
-    console.log("hit");
-    intersectGraphicsLayer.removeAll();
-    geocodeHomeAddress();
-  })
-  workRunEl.addEventListener('click', function() {
-    console.log("hit");
-    intersectGraphicsLayer.removeAll();
-    geocodeWorkAddress();
-  })
-  customRunEl.addEventListener('click', function() {
-    console.log("hit");
-    intersectGraphicsLayer.removeAll();
-    geocodeCustomAddress();
-  })
+      // reseting logic
+      workAddressElement.value = '';
+      workAddress = undefined;
+      workTravelTypeEl.value = "Driving";
+      workTravelType = "Driving";
+      workCommuteTimeEl.value = 30;
+      workCommuteTime = 30;
+    });
+    // reset custom button logic
+    customResetEl.addEventListener('click', function () {
+      // reset to graphics layer
+      customGraphicsLayer.removeAll();
+      // clears graphics layer for intersection
+      intersectGraphicsLayer.removeAll();
+      // removes custom address from serviceAreaGeometriesObject
+      delete serviceAreaGeometries.customAddress
+      // reseting logic
+      customAddressElement.value = '';
+      customAddress = undefined;
+      customTravelTypeEl.value = "Driving";
+      customTravelType = "Driving";
+      customTimeEl.value = 30;
+      customTime = 30;
+    });
+    // run home button logic
+    homeRunEl.addEventListener('click', function () {
+      console.log("hit");
+      intersectGraphicsLayer.removeAll();
+      geocodeHomeAddress();
+    })
+    workRunEl.addEventListener('click', function () {
+      console.log("hit");
+      intersectGraphicsLayer.removeAll();
+      geocodeWorkAddress();
+    })
+    customRunEl.addEventListener('click', function () {
+      console.log("hit");
+      intersectGraphicsLayer.removeAll();
+      geocodeCustomAddress();
+    })
 
 
     /**
@@ -363,43 +362,43 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           // Handle any errors
           console.error("Error occurred: ", error);
         });
-  }
+    }
 
-  function geocodeCustomAddress(){
-    console.log("Custom address API response")
-    const geocodedUrlwork= `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${customAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
-    fetch(geocodedUrlwork)
-      .then(function(responsec) {
-        if (!responsec.ok) {
-          throw new Error('Network response was not ok ' + responsec.statusText);
-        }
-        return responsec.json();
-      })
-      .then(function(datac) {
-        // Handle the response data
-        console.log("Geocode response for work addy: ", datac);
-        customX = datac.candidates[0]?.location.x;
-        customY = datac.candidates[0]?.location.y;
-        addCustomCoordinate()
-      })
-      .catch(function(error) {
-        // Handle any errors
-        console.error("Error occurred: ", error);
-      });
-  }
+    function geocodeCustomAddress() {
+      console.log("Custom address API response")
+      const geocodedUrlwork = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${customAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
+      fetch(geocodedUrlwork)
+        .then(function (responsec) {
+          if (!responsec.ok) {
+            throw new Error('Network response was not ok ' + responsec.statusText);
+          }
+          return responsec.json();
+        })
+        .then(function (datac) {
+          // Handle the response data
+          console.log("Geocode response for work addy: ", datac);
+          customX = datac.candidates[0]?.location.x;
+          customY = datac.candidates[0]?.location.y;
+          addCustomCoordinate()
+        })
+        .catch(function (error) {
+          // Handle any errors
+          console.error("Error occurred: ", error);
+        });
+    }
 
-  // Graphics layers for home, work, and intersection
-  const homeGraphicsLayer = new GraphicsLayer();
-  const workGraphicsLayer = new GraphicsLayer();
-  const customGraphicsLayer = new GraphicsLayer();
-  const intersectGraphicsLayer = new GraphicsLayer();
+    // Graphics layers for home, work, and intersection
+    const homeGraphicsLayer = new GraphicsLayer();
+    const workGraphicsLayer = new GraphicsLayer();
+    const customGraphicsLayer = new GraphicsLayer();
+    const intersectGraphicsLayer = new GraphicsLayer();
 
-  workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
-  homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
-  customGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
-  map.add(homeGraphicsLayer);
-  map.add(workGraphicsLayer);
-  map.add(customGraphicsLayer);
+    workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
+    homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
+    customGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
+    map.add(homeGraphicsLayer);
+    map.add(workGraphicsLayer);
+    map.add(customGraphicsLayer);
 
     /**
      * functions to modify map zoom
@@ -507,11 +506,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         // adds layer and recenters view
         homeGraphicsLayer.add(pointGraphic);
 
-      // Service area for home address
-      const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4], 'home');
+        // Service area for home address
+        const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
+        solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4], 'home');
 
-      changeView();
+        changeView();
       }
     }
 
@@ -541,12 +540,12 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         // adds layer and recenters view
         customGraphicsLayer.add(pointGraphic);
 
-      
-      const customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, [0, 222, 166, 0.4], 'custom')
-      changeView();
+
+        const customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
+        solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, [0, 222, 166, 0.4], 'custom')
+        changeView();
+      }
     }
-  }
 
 
     function addWorkCoordinate() {
@@ -573,9 +572,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         // adds layer and recenters view
         workGraphicsLayer.add(pointGraphic);
 
-      // Service area for work address
-      const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], 'work' )
+        // Service area for work address
+        const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
+        solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], 'work')
 
 
         changeView();
@@ -597,129 +596,144 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       return taskParameters;
     }
 
-  // Creates service area polygon and returns graphic layer
-  function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color, type) {
-    return serviceArea.solve(url, serviceAreaParams)
-      .then(function(result){
-        if (result.serviceAreaPolygons.features.length) {
-          currentGraphicsLayer.removeAll()
+    // Creates service area polygon and returns graphic layer
+    function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color, type) {
+      return serviceArea.solve(url, serviceAreaParams)
+        .then(function (result) {
+          if (result.serviceAreaPolygons.features.length) {
+            currentGraphicsLayer.removeAll()
 
-          // logic to properly assign home vs work elements of service area geometries
-          type === 'home' ? serviceAreaGeometries.homeGeometry = result.serviceAreaPolygons.features[0].geometry
-          : type === 'work' ? serviceAreaGeometries.workGeometry = result.serviceAreaPolygons.features[0].geometry
-          : serviceAreaGeometries.customGeometry = result.serviceAreaPolygons.features[0].geometry
-        
-          // run intersection tool only if if there are two service area geometry elements
-          if (Object.keys(serviceAreaGeometries).length == 2){
-            intersect = geometryEngine.intersect(serviceAreaGeometries.homeGeometry, serviceAreaGeometries.workGeometry)
+            // logic to properly assign home vs work elements of service area geometries
+            type === 'home' ? serviceAreaGeometries.homeGeometry = result.serviceAreaPolygons.features[0].geometry
+              : type === 'work' ? serviceAreaGeometries.workGeometry = result.serviceAreaPolygons.features[0].geometry
+                : serviceAreaGeometries.customGeometry = result.serviceAreaPolygons.features[0].geometry
 
-            intersectLat = intersect.centroid.latitude
-            intersectLong = intersect.centroid.longitude
-            console.log(intersectLat, intersectLong)
+            // run intersection tool only if if there are two service area geometry elements
+            if (Object.keys(serviceAreaGeometries).length == 2) {
+              intersect = geometryEngine.intersect(serviceAreaGeometries.homeGeometry, serviceAreaGeometries.workGeometry)
 
-            view.goTo({
-              center: [intersectLong, intersectLat],
-              zoom: 10,
-            });
-            
+              intersectLat = intersect.centroid.latitude
+              intersectLong = intersect.centroid.longitude
+              console.log(intersectLat, intersectLong)
 
-            // sends each ring of intersection geometry to funciton to draw polygons
-            for (let index = 0; index < intersect.rings.length; index++) {
-              createIntersectPolygon(intersect, index)
+              view.goTo({
+                center: [intersectLong, intersectLat],
+                zoom: 10,
+              });
+
+
+              // sends each ring of intersection geometry to funciton to draw polygons
+              for (let index = 0; index < intersect.rings.length; index++) {
+                createIntersectPolygon(intersect, index)
+              }
+
             }
+
+            // creating filled polygon for each feature of service area, home or work
+            result.serviceAreaPolygons.features.forEach(function (graphic) {
+              graphic.symbol = {
+                type: "simple-fill",
+                color: color
+              }
+              currentGraphicsLayer.add(graphic, 0);
+            });
+
 
           }
-          
-          // creating filled polygon for each feature of service area, home or work
-          result.serviceAreaPolygons.features.forEach(function(graphic){
-            graphic.symbol = {
-              type: "simple-fill",
-              color: color
-            }
-            currentGraphicsLayer.add(graphic,0);
-          });
-
-
-        }
-      }, function(error){
-        console.log(error);
-      });
-  }
-
-  // function to draw polygon for each ring in intersection geometry
-  function createIntersectPolygon(intersection, index){
-
-    const intersectionPolygon = {
-      type: "polygon", 
-      rings: [intersection.rings[index]]
+        }, function (error) {
+          console.log(error);
+        });
     }
-    
-    const simpleFillSymbol = {
-      type: "simple-fill",
-      color: [227, 139, 79, 0.2],  // Orange, opacity 80%
-      outline: {
+
+    // function to draw polygon for each ring in intersection geometry
+    function createIntersectPolygon(intersection, index) {
+
+      const intersectionPolygon = {
+        type: "polygon",
+        rings: [intersection.rings[index]]
+      }
+
+      const simpleFillSymbol = {
+        type: "simple-fill",
+        color: [227, 139, 79, 0.2],  // Orange, opacity 80%
+        outline: {
           color: [255, 255, 255],
           width: 1
-      }
-    };
-    
-    const polygonGraphic = new Graphic({
-      geometry: intersectionPolygon,
-      symbol: simpleFillSymbol
-    })
-    
-    // adds current ring polygon to a graphic layer and adds layer to map
-    intersectGraphicsLayer.add(polygonGraphic)
-    map.add(intersectGraphicsLayer);
+        }
+      };
 
-  }  
-  
-  function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
+      const polygonGraphic = new Graphic({
+        geometry: intersectionPolygon,
+        symbol: simpleFillSymbol
+      })
+
+      // adds current ring polygon to a graphic layer and adds layer to map
+      intersectGraphicsLayer.add(polygonGraphic)
+      map.add(intersectGraphicsLayer);
+
+    }
+
+    function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
+
+      console.log('study: ' + studyAreas );
 
       let itemid = "8c4eeb44679c422a86fdbb392d81adeb"; // State of the Community custom
 
       report = '{"token":"' + token + '","url":"https://intern-hackathon.maps.arcgis.com","itemid":"' + itemid + '"}'
 
-    studyAreas = "[{geometry:{x:-122.3328,y:47.6061}}]";
-    format = "html";
+      // studyAreas = "[{geometry:{x:-122.3328,y:47.6061}}]";
+      format = "html";
 
 
-    let url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/createReport?";
-    url += "report=" + report;
-    url += "&format=" + format;
-    url += "&f=" + f;
-    url += "&studyAreas=" + studyAreas;
-    url += "&token=" + token;
+      let url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/createReport?";
+      url += "report=" + report;
+      url += "&format=" + format;
+      url += "&f=" + f;
+      url += "&studyAreas=" + studyAreas;
+      url += "&token=" + token;
 
-    return url;
+      return url;
 
-  }
+    }
 
     function loadInfoGraphic() {
+      if (!intersectLat || !intersectLong ) {
+        alert('You must have a target area created');
+        return;
+      }
+      
+
       const requestOptions = {
         method: "GET",
         redirect: "follow"
       };
 
-    const token = "AAPTxy8BH1VEsoebNVZXo8HurIdz3p260SczOzIA26HzLpx1DvmZTCB6gARrkkrsnzwq10KRe_AC_3HGoPrysBwmHkl50BBQrZClTvypptAz3IDaPwqtQxekFnffLCo3JCsRs5bCNMUiFuqSAfPTqv0fpRJF1ZR_gulfqMSTAdSS-tRU2J3VWybItUcpQUD2hk_fCFIO0UPFhHGSpM_krsAy_7dD9NWoliM-x50Z8qOMrMY7xpHt4Y3Wf1RUBOPwEW7dAT1_Tb3ffdWB";
-
-    let url = buildRequestURL(token, "", "", "html")
-    console.log("URL: " + url);
-
-    fetch(url, requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        console.log("RESULT: " + result);
+      const token = "AAPTxy8BH1VEsoebNVZXo8HurIdz3p260SczOzIA26HzLpx1DvmZTCB6gARrkkrsnzwq10KRe_AC_3HGoPrysBwmHkl50BBQrZClTvypptAz3IDaPwqtQxekFnffLCo3JCsRs5bCNMUiFuqSAfPTqv0fpRJF1ZR_gulfqMSTAdSS-tRU2J3VWybItUcpQUD2hk_fCFIO0UPFhHGSpM_krsAy_7dD9NWoliM-x50Z8qOMrMY7xpHt4Y3Wf1RUBOPwEW7dAT1_Tb3ffdWB";
 
 
-        random = "<html><body>hello</body></html>";
-        var doc = document.getElementById('infoFrame').contentWindow.document;
-        doc.open();
-        doc.write(result);
-        doc.close();
+      studyAreas = "[{geometry:{x:" + intersectLong + ", y:" + intersectLat + "}, areaType: NetworkServiceArea, bufferUnits: Minutes, bufferRadii: [5,10,20], travel_mode: Trucking}]";
 
-      })
-      .catch((error) => console.error(error));
-  }
+      // studyAreas='[{"geometry":{"x": -122.435, "y": 37.785},"areaType": "NetworkServiceArea","bufferUnits": "Kilometers","bufferRadii": [5,10,15],"travel_mode":"Trucking"}]';
 
-})  
+
+      let url = buildRequestURL(token, studyAreas, "", "html")
+      console.log("URL: " + url);
+
+      fetch(url, requestOptions)
+        .then((response) => response.text())
+        .then((result) => {
+          console.log("RESULT: " + result);
+
+          random = "<html><body>hello</body></html>";
+          var doc = document.getElementById('infoFrame').contentWindow.document;
+          doc.open();
+          doc.write(result);
+          doc.close();      
+          
+          modal.open = true;
+
+        })
+        .catch((error) => console.error(error));
+    }
+
+  })  
