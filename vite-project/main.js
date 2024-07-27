@@ -136,7 +136,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     infoElement.addEventListener('click', () => {
       loadInfoGraphic();
-      // modal.open = true;
+      modal.open = true;
     });
 
     /**
