@@ -41,7 +41,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   const travelTimeEl = document.getElementById('homeSlider');
   const workCommuteTimeEl = document.getElementById('workSlider');
   // gets calcite-combobox elements
-  const travelTypeEl = document.getElementById('travelType');
+  const homeTravelTypeEl = document.getElementById('homeTravelType');
+  const workTravelTypeEl = document.getElementById('workTravelType');
 
   /**
    * Global variables
@@ -62,7 +63,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   let travelTime = travelTimeEl.value;
   let workCommuteTime = workCommuteTimeEl.value;
   // grabs combobox inputs --> defaults to Car
-  let travelType = "Car";
+  let homeTravelType = homeTravelTypeEl.value;
+  let workTravelType = workTravelTypeEl.value;
+  
 
   /**
    * For side panels rendering configuration blocks
@@ -143,11 +146,18 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
    */
 
   // grabs home travel type
-  travelTypeEl.addEventListener('calciteComboboxChange', function(event) {
+  homeTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
     const val = event.target.value;
-    travelType = val;
-    console.log("travelType", travelType);
+    homeTravelType = val;
+    console.log("home and work travel type", homeTravelType, workTravelType);
   });
+
+  // grabs work travel type
+  workTravelTypeEl.addEventListener('calciteComboboxChange', function(event) {
+    const val = event.target.value;
+    workTravelType = val;
+    console.log("home and work travel type", homeTravelType, workTravelType);
+  })
 
   /////aniket
 
