@@ -32,7 +32,6 @@
           <calcite-action id="work" text="Work" icon="organization"></calcite-action>
           <calcite-action id="places" text="Places" icon="pins"></calcite-action>
           <calcite-action-group columns="2" slot="actions-end">
-            <calcite-action text="Run" icon="play"></calcite-action>
             <calcite-action text="Reset" icon="reset"></calcite-action>
           </calcite-action-group>
         </calcite-action-bar>
@@ -42,7 +41,11 @@
           <calcite-block open id="homeContainer" class="calcite-blocks">
             <calcite-label>Home Address:
               <calcite-input-text icon="pin-tear-f" id="homeAddress" placeholder="Address"></calcite-input-text>
+              <calcite-input-message icon="check" status="valid" scale="m">
+                Point added to the map!
+            </calcite-input-message>
             </calcite-label>
+            <br>
             <calcite-label>
               Travel Mode:
               <calcite-combobox id="homeTravelType" value="Driving" placeholder-icon="rural-driving-time" placeholder="Travel Mode" selection-mode="single">
@@ -50,6 +53,7 @@
                   <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
               </calcite-combobox>
           </calcite-label>
+          <br>
               <calcite-label>
                 Travel Time (minutes):
                 <calcite-slider id=homeSlider label="Preferred Home Commute" value="30" label-handles label-ticks ticks="10" min-label="0" max-label="100"></calcite-slider>
