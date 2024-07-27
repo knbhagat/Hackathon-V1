@@ -100,7 +100,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     if (homeAddress) {
       geocodeHomeAddress(homeAddress);
     } else {
-      homeGraphicsLayer.removeAll()
+      homeGraphicsLayer.removeAll();
     }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
