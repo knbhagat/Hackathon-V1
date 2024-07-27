@@ -45,6 +45,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // gets calcite-combobox elements
   const homeTravelTypeEl = document.getElementById('homeTravelType');
   const workTravelTypeEl = document.getElementById('workTravelType');
+  // gets reset calcite-button
+  const homeResetEl = document.getElementById('resetHome');
+  const workResetEl = document.getElementById('resetWork');
+  // gets run calcite burron
+  const homeRunEl = document.getElementById('runHome');
+  const workRunEl = document.getElementById('runWork');
+
 
   /**
    * Global variables
@@ -66,6 +73,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // grabs combobox inputs --> defaults to Car
   let homeTravelType = homeTravelTypeEl.value;
   let workTravelType = workTravelTypeEl.value;
+
   
 
   /**
@@ -101,29 +109,16 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   // Gets Home Address
   homeAddressElement.addEventListener('calciteInputTextChange', function(event) {
     homeAddress = event.target.value;
-    if (homeAddress) {
-      geocodeHomeAddress(homeAddress);
-    } else {
-      homeGraphicsLayer.removeAll();
-    }
-   
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
   // Gets Work Address
   workAddressElement.addEventListener('calciteInputTextChange', function(event) {
     workAddress = event.target.value;
-    if (workAddress) {
-      geocodeWorkAddress(homeAddress);
-    } else {
-      workGraphicsLayer.removeAll();
-    }
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
   // Gets place input
   placeInputElement.addEventListener('calciteInputTextChange', function(event) {
     placeInput = event.target.value;
-    console.log(placeInputElement)
-    placeInputElement.value = ""
     console.log("place, work, home", placeInput, workAddress, homeAddress);
   });
 
@@ -134,22 +129,14 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   // grabs home slider
   travelTimeEl.addEventListener('calciteSliderChange', function(event) {
-    console.log("original home commute time", travelTime)
     travelTime = event.target.value;
-
-    plotHomeServiceArea()
-
-    console.log("travelTime, workCommuteTime", travelTime, workCommuteTime)
+    // plotHomeServiceArea()
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
-    addHomeCoordinate();
   });
   // grabs work slider
   workCommuteTimeEl.addEventListener('calciteSliderChange', function(event) {
-    console.log("original work commute time", workCommuteTime)
     workCommuteTime = event.target.value;
-
     // create service area()
-
     console.log("travelTime, workCommuteTime", travelTime, workCommuteTime);
   });
 
@@ -171,6 +158,46 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     console.log("home and work travel type", homeTravelType, workTravelType);
   })
 
+  /**
+   * implements button logic
+   */
+
+  // reset home button logic
+  homeResetEl.addEventListener('click', function() {
+    console.log("hit")
+    // reset to graphics layer
+    homeGraphicsLayer.removeAll();
+    // reseting logic
+    homeAddressElement.value = '';
+    homeAddress = undefined;
+    homeTravelTypeEl.value = "Driving";
+    homeTravelType = "Driving";
+    travelTimeEl.value = 30;
+    travelTime = 30;
+  });
+  // reset work button logic
+  workResetEl.addEventListener('click', function() {
+    console.log("hit")
+    // reset to graphics layer
+    workGraphicsLayer.removeAll();
+    // reseting logic
+    workAddressElement.value = '';
+    workAddress = undefined;
+    workTravelTypeEl.value = "Driving";
+    workTravelType = "Driving";
+    workCommuteTimeEl.value = 30;
+    workCommuteTime = 30;
+  });
+  // run home button logic
+  homeRunEl.addEventListener('click', function() {
+    console.log("hit");
+    geocodeHomeAddress();
+  })
+  workRunEl.addEventListener('click', function() {
+    console.log("hit");
+    geocodeWorkAddress();
+  })
+
   /////aniket
 
 
@@ -189,8 +216,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       .then(function(data) {
         // Handle the response data
         console.log("Geocode response: ", data);
-        homeX = data.candidates[0].location.x;
-        homeY = data.candidates[0].location.y;
+        homeX = data.candidates[0]?.location.x;
+        homeY = data.candidates[0]?.location.y;
         addHomeCoordinate()
       })
       .catch(function(error) {
@@ -215,8 +242,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       .then(function(dataw) {
         // Handle the response data
         console.log("Geocode response for work addy: ", dataw);
-        workX = dataw.candidates[0].location.x;
-        workY = dataw.candidates[0].location.y;
+        workX = dataw.candidates[0]?.location.x;
+        workY = dataw.candidates[0]?.location.y;
         addWorkCoordinate()
       })
       .catch(function(error) {
@@ -290,14 +317,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       
       const homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4])
+      const homeServiceArea = solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, [0, 222, 166, 0.4])
 
       // homeGraphicsLayer.add(polygonGraphic)
       changeView();
-
     }
-
-
   }
 
   function addWorkCoordinate() {
@@ -325,7 +349,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       workGraphicsLayer.add(pointGraphic);
 
       const workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference))
-      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [0, 222, 166, 0.4] )
+      solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5] )
 
       changeView();
     }
@@ -333,7 +357,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   // Creates parameters for service area function call
   function createServiceAreaParams(locationGraphic, driveTimeCutoff, outSpatialReference) {
-
     const featureSet = new FeatureSet({
       features: [locationGraphic]
     })
@@ -349,7 +372,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   // Creates service area polygon and returns graphic layer
   function solveServiceArea(url, serviceAreaParams, currentGraphicsLayer, color) {
-
     return serviceArea.solve(url, serviceAreaParams)
       .then(function(result){
         if (result.serviceAreaPolygons.features.length) {
@@ -366,7 +388,5 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       }, function(error){
         console.log(error);
       });
-
   }
-
 })
