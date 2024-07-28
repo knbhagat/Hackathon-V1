@@ -316,6 +316,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     travelTime = 30;
     homeX = undefined;
     homeY = undefined;
+    valHomeAddressEl.icon = "information";
+    valHomeAddressEl.status = "idle"
+    valHomeAddressEl.innerText = "Please enter an address above!";
     if (workX && workY && customX && customY) {
       solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor);
     }
@@ -344,6 +347,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     jobDescription = ""
     workX = undefined;
     workY = undefined;
+    valWorkAddressEl.icon = "information";
+    valWorkAddressEl.status = "idle"
+    valWorkAddressEl.innerText = "Please enter an address above!";
     if (customX && customY && homeX && homeY) {
       solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, homeGraphicColor);
     }
@@ -367,6 +373,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     customTime = 30;
     customX = undefined;
     customY = undefined;
+    valCustomAddressEl.icon = "information";
+    valCustomAddressEl.status = "idle"
+    valCustomAddressEl.innerText = "Please enter an address above!";
 
     if (workX && workY && homeX && homeY) {
       solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor);
