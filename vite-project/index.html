@@ -35,7 +35,7 @@
 
           <calcite-action id="home" text="Home" icon="home"></calcite-action>
           <calcite-action id="work" text="Work" icon="organization"></calcite-action>
-          <calcite-action id="custom" text="Custom" icon="layers-editable"></calcite-action>
+          <calcite-action id="custom" text="Add Custom" icon="pin-plus"></calcite-action>
         </calcite-action-group>
         <calcite-action-group>
 
@@ -80,8 +80,8 @@
               </calcite-input-message>
           </calcite-label>
           <hr class="mint-hr">
-          <calcite-label>Job Description:
-            <calcite-input-text icon="organization" id="jobDescription" placeholder="Job Description"></calcite-input-text>
+          <calcite-label>What job are you interested in?
+            <calcite-input-text icon="organization" id="jobDescription" placeholder="Job Title"></calcite-input-text>
           </calcite-label>
           <hr class="mint-hr">
           <calcite-label>
@@ -148,12 +148,21 @@
 
   <calcite-modal id="infomodal" fullscreen="true">
     <div slot="header" id="modal-title">
-        Infographic
+        Community Information
     </div>
     <div slot="content">
       <div style="margin-left: auto; margin-right: auto; display: flex; align-items: center; height: 800px">
       <iframe style="width: 100%; height: 100%;" id="infoFrame" src="about:blank"></iframe>
     </div>
+    </div>
+  </calcite-modal>
+
+  <calcite-modal id="warningmodal">
+    <div slot="header" id="modal-title">
+      Community Information
+    </div>
+    <div slot="content">
+      Please select at least Home and Work areas to get information about the matching area. 
     </div>
   </calcite-modal>
 
