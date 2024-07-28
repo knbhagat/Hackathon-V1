@@ -767,6 +767,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     function loadInfoGraphic(placeName) {
+      if (!placeName || placeName =="") {
+        placeName = "Community Information";
+      }
       let modaltitle  = document.getElementById('modal-title');
       modaltitle.innerHTML = placeName + " - What's in Walking Distance?";
 
