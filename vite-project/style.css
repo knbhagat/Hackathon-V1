@@ -18,14 +18,14 @@ body{
 }
 
 #logoDiv {
-  padding: 12px;
-  width: 150px;
-  height: 150px;
-  background-image: url('dog.png');
-  background-image: url('dog.png');
+  padding: 5px;
+  width: 250px;
+  height: 450px;
+  background-image: url('https://nitro.maps.arcgis.com/sharing/rest/content/items/9e6b660e35bc4ff1b06c02efc8a756e7/data');
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
+  border-radius: 10px;
 }
 
 
