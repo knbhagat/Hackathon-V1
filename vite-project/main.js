@@ -109,6 +109,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let customAddress;
     let jobDescription = "";
     let placeInput;
+    let mappedAddress;
     // slider inputs
     let travelTime = travelTimeEl.value;
     let workCommuteTime = workCommuteTimeEl.value;
@@ -122,6 +123,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let intersectLong;
     let intersect;
     let intersectArea;
+
+
 
 
     /**
@@ -157,7 +160,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     });
 
     infoElement.addEventListener('click', () => {
-      loadInfoGraphic("Community Information");
+      if (mappedAddress) {
+        loadInfoGraphic(mappedAddress);        
+      }
+      else {
+        loadInfoGraphic("Community Information");
+
+      }
     });
 
     /**
@@ -856,6 +865,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
  
   function showPopup(response){
     let parts = response.address.split(',').map(part => part.trim());
+    mappedAddress = response.address;
     view.openPopup({
       title: `Intersecting Area Information:`,
       content:
