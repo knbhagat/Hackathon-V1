@@ -122,8 +122,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let intersectLong;
     let intersect;
 
-    // const intersectGraphicsColor = [255,255,255, 0.4];
-
 
     /**
      * For side panels rendering configuration blocks
@@ -158,7 +156,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     });
 
     infoElement.addEventListener('click', () => {
-      loadInfoGraphic();
+      loadInfoGraphic("Community Information");
     });
 
     /**
@@ -769,7 +767,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     }
 
-    function loadInfoGraphic() {
+    function loadInfoGraphic(placeName) {
+      let modaltitle  = document.getElementById('modal-title');
+      modaltitle.innerHTML = placeName + " - What's in Walking Distance?";
+
       console.log('long/lat: ' + intersectLong + ', ' + intersectLat);
 
 
