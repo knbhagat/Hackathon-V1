@@ -23,7 +23,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       container: "aniket-trial-map" // Div element
     });
     
-    view.ui.components = []
+    // console.log(view.ui.components)
+    view.ui.components = ["attribution"]
     
     let zoom = new Zoom({
       view:view
