@@ -2,7 +2,7 @@
 
 require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer", "esri/rest/serviceArea",
   "esri/rest/support/ServiceAreaParameters",
-  "esri/rest/support/FeatureSet", "esri/geometry/geometryEngine", "esri/widgets/Zoom"], function (esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet, geometryEngine, Zoom) {
+  "esri/rest/support/FeatureSet", "esri/geometry/geometryEngine", "esri/widgets/Zoom", "esri/widgets/Legend"], function (esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet, geometryEngine, Zoom, Legend) {
 
 
     // Put all API config at start
@@ -29,6 +29,12 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let zoom = new Zoom({
       view:view
     })
+
+    let legend = new Legend({
+      view: view,
+    })
+
+    view.ui.add(legend, "top-left")
 
     view.ui.add(zoom, "top-right")
 
