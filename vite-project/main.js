@@ -24,7 +24,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     });
     
     // console.log(view.ui.components)
-    view.ui.components = []
+    view.ui.components = ["attribution"]
     
     let zoom = new Zoom({
       view:view
@@ -35,6 +35,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     })
 
     view.ui.add(legend, "top-left")
+    view.ui.add("logoDiv", "bottom-right");
 
     view.ui.add(zoom, "top-right")
 
@@ -746,6 +747,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // adds current ring polygon to a graphic layer and adds layer to map
     intersectGraphicsLayer.add(polygonGraphic)
     map.add(intersectGraphicsLayer);
+
+    console.log('LEGEND', legend)
   }  
   
   function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {

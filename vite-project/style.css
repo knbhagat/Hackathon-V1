@@ -17,6 +17,17 @@ body{
   margin: 0;
 }
 
+#logoDiv {
+  padding: 12px;
+  width: 150px;
+  height: 150px;
+  background-image: url('dog.png');
+  background-image: url('dog.png');
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+
 
 .calcite-blocks {
   margin-block: 0;
