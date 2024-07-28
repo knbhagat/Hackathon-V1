@@ -857,18 +857,22 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   function showPopup(response){
     let parts = response.address.split(',').map(part => part.trim());
     view.openPopup({
-      title: "Information",
+      title: `Intersecting Area Information:`,
       content:
-      `<div style="color: blue; width:fit-content;">
-        <a href="https://www.indeed.com/jobs?q=${jobDescription}&l=${parts[0]}%2C+${parts[1]}" target="_blank">
+      `<p><b>${parts[1]}, ${parts[2]}</b> lies within the travel time parameters selected. This area is <b>${intersectArea}</b> sq. miles. Please find the below buttons to see apartments and jobs within this area. Make sure to fill in the <b>Job Title Input (Work Section)</b> to see Indeed jobs within this area.</p>
+      <div style="width: 200px; text-align: center; margin-left: auto; margin-right: auto;">
+        <a style=" width: 200px; padding: 2px; color: white; text-decoration: none; background-color: #2557A7" href="https://www.indeed.com/jobs?q=${jobDescription}&l=${parts[0]}%2C+${parts[1]}" target="_blank">
           Indeed Job Board
         </a>
       </div>
-      <div style="color: blue; width: fit-content;">
-        <a href="https://www.rent.com/${parts[1]}/${parts[0]}-apartments" target="_blank" >
+      <br>
+      <div style="width: 200px; text-align: center; margin-left: auto; margin-right: auto;">
+        <a style="width: 200px; padding: 2px; color: white; text-decoration: none; background-color: #000" href="https://www.rent.com/${parts[1]}/${parts[0]}-apartments" target="_blank" >
           Apartments For Rent
         </a>
-      </div>`,
+      </div>
+      <br>
+      <p>To look at this area's demographic data, please select the <b>Infographic Button</b> on the left sidebar.</p>`,
       location: response.location,
     });
     popupAddGraphic(response);
