@@ -2,7 +2,7 @@
 
 require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer", "esri/rest/serviceArea",
   "esri/rest/support/ServiceAreaParameters",
-  "esri/rest/support/FeatureSet", "esri/geometry/geometryEngine", "esri/widgets/Zoom", "esri/widgets/Legend"], function (esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet, geometryEngine, Zoom, Legend) {
+  "esri/rest/support/FeatureSet", "esri/geometry/geometryEngine", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/rest/locator"], function (esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet, geometryEngine, Zoom, Legend, locator) {
 
 
     // Put all API config at start
@@ -38,6 +38,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     view.ui.add(zoom, "top-right")
 
+    view.popup.actions = [];
 
     const serviceAreaUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World/solveServiceArea";
 
@@ -299,6 +300,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     homeGraphicsLayer.removeAll();
     // clears graphics layer for intersection
     intersectGraphicsLayer.removeAll();
+    view.graphics.removeAll();
+    view.popup.close();
     delete serviceAreaGeometries.homeGeometry;
     // reseting logic
     homeAddressElement.value = '';
@@ -320,6 +323,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     workGraphicsLayer.removeAll();
     // clears graphics layer for intersection
     intersectGraphicsLayer.removeAll();
+    view.graphics.removeAll();
+    view.popup.close();
     // removes work address from serviceAreaGeometriesObject
     delete serviceAreaGeometries.workGeometry;
     console.log(serviceAreaGeometries);
@@ -344,6 +349,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // clears graphics layer for intersection
     intersectGraphicsLayer.removeAll();
     // removes custom address from serviceAreaGeometriesObject
+    view.graphics.removeAll();
+    view.popup.close();
     delete serviceAreaGeometries.customGeometry;
     // reseting logic
     customAddressElement.value = '';
@@ -357,8 +364,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     if (workX && workY && homeX && homeY) {
       solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor);
-    }
-
+    } 
   });
   // run home button logic
   homeRunEl.addEventListener('click', function() {
@@ -658,6 +664,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       .then(function(result) {
         if (result.serviceAreaPolygons.features.length) {
           currentGraphicsLayer.removeAll()
+          // removes previous intersect graphic
+          view.graphics.removeAll();
+          view.popup.close();
 
           // logic to properly assign home vs work elements of service area geometries
           if (type) {
@@ -699,6 +708,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       for (let index = 0; index < intersect?.rings?.length; index++) {
         createIntersectPolygon(intersect, index)
       }
+      reverseGeocoding();
     }
     
     // creating filled polygon for each feature of service area, home or work
@@ -812,4 +822,66 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         })
         .catch((error) => console.error(error));
     }
-  })  
+
+  // const popupView = new MapView({
+
+  // });
+
+  function reverseGeocoding() {
+    const pt = {x: intersectLong, y: intersectLat}
+    const geocodingServiceUrl = "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer" ;
+
+    const params = {
+      location: pt
+    };
+
+    locator.locationToAddress(geocodingServiceUrl, params).then(
+      (response) => {
+        if (response) {
+          console.log("RESPONSE", response)
+          showPopup(response);
+        }
+      },
+      (err) => {
+        showPopup("No address found.", pt);
+      }
+    );
+  }
+ 
+  function showPopup(response){
+    let parts = response.address.split(',').map(part => part.trim());
+    view.openPopup({
+      title: response.attributes.PlaceName || "Address",
+      content:
+        response.attributes.LongLabel +
+        "<br><br>" +
+        response.location.longitude.toFixed(5) +
+        ", " +
+        response.location.latitude.toFixed(5) + `Job Board: https://www.indeed.com/jobs?q=developer&l=${parts[0]}%2C+${parts[1]}`,
+      location: response.location,
+    });
+    popupAddGraphic(response);
+  }
+ 
+  function popupAddGraphic(response) {
+    if (!response.location) {
+        return;
+    }
+    console.log("response", response);
+    view.graphics.removeAll();
+    view.graphics.add(
+      new Graphic({
+        symbol: {
+          type: "simple-marker",
+          outline: {
+            color: "white",
+            width: 1.5,
+          },
+          color: "black",
+          size: 6,
+        },
+        geometry: response.location,
+      })
+    );
+  }
+})  
