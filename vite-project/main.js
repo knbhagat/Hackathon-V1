@@ -737,12 +737,12 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     function loadInfoGraphic() {
       console.log('long/lat: ' + intersectLong + ', ' + intersectLat);
 
-      intersectLong = -122.26800755691998;
-      intersectLat = 47.390387863000136;
 
       if (!intersectLat || !intersectLong ) {
-        alert('You must have a target area created');
-        return;
+        intersectLong = -122.26800755691998;
+        intersectLat = 47.390387863000136;
+        // alert('You must have a target area created');
+        // return;
       }
       
 
