@@ -2,7 +2,7 @@
 
 require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer", "esri/rest/serviceArea",
   "esri/rest/support/ServiceAreaParameters",
-  "esri/rest/support/FeatureSet", "esri/geometry/geometryEngine"], function (esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet, geometryEngine) {
+  "esri/rest/support/FeatureSet", "esri/geometry/geometryEngine", "esri/widgets/Zoom", "esri/widgets/Legend"], function (esriConfig, Map, MapView, Graphic, GraphicsLayer, serviceArea, ServiceAreaParams, FeatureSet, geometryEngine, Zoom, Legend) {
 
 
     // Put all API config at start
@@ -15,12 +15,29 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       basemap: "arcgis/human-geography-dark" // basemap styles service
     });
 
+    
     const view = new MapView({
       map: map,
       center: [-88.7129, 37.0902], // Longitude, latitude
       scale: 12500000, // Zoom level
       container: "aniket-trial-map" // Div element
     });
+    
+    // console.log(view.ui.components)
+    view.ui.components = []
+    
+    let zoom = new Zoom({
+      view:view
+    })
+
+    let legend = new Legend({
+      view: view,
+    })
+
+    view.ui.add(legend, "top-left")
+
+    view.ui.add(zoom, "top-right")
+
 
     const serviceAreaUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World/solveServiceArea";
 
@@ -704,7 +721,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       const simpleFillSymbol = {
         type: "simple-fill",
-        color: [227, 139, 79, 0.2],  // Orange, opacity 80%
+        color: [255, 255, 255, 0.3],  // White, opacity 80%
         outline: {
           color: [255, 255, 255],
           width: 1
