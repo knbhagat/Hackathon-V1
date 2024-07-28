@@ -438,9 +438,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   const homeGraphicsLayer = new GraphicsLayer();
   const homeGraphicColor = [0, 222, 166, 0.4];
   const workGraphicsLayer = new GraphicsLayer();
-  const workGraphicColor = [66, 135, 245, 0.5];
+  const workGraphicColor = [66, 135, 245, 0.4];
   const customGraphicsLayer = new GraphicsLayer();
-  const customGraphicColor = [0, 222, 166, 0.4];
+  const customGraphicColor = [255, 255, 0, 0.4];
   const intersectGraphicsLayer = new GraphicsLayer();
   workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
   homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
