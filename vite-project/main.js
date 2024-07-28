@@ -108,6 +108,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let intersectLong;
     let intersect;
 
+    // const intersectGraphicsColor = [255,255,255, 0.4];
 
 
     /**
@@ -377,7 +378,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           console.log("Geocode response: ", data);
           homeX = data.candidates[0]?.location.x;
           homeY = data.candidates[0]?.location.y;
-          addHomeCoordinate(isBoundaryShown)
+          addHomeCoordinate(isBoundaryShown, homeGraphicColor)
         })
         .catch(function (error) {
           // Handle any errors
@@ -403,7 +404,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           console.log("Geocode response for work addy: ", dataw);
           workX = dataw.candidates[0]?.location.x;
           workY = dataw.candidates[0]?.location.y;
-          addWorkCoordinate(isBoundaryShown)
+          addWorkCoordinate(isBoundaryShown, workGraphicColor)
         })
         .catch(function (error) {
           // Handle any errors
@@ -426,7 +427,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           console.log("Geocode response for work addy: ", datac);
           customX = datac.candidates[0]?.location.x;
           customY = datac.candidates[0]?.location.y;
-          addCustomCoordinate(isBoundaryShown)
+          addCustomCoordinate(isBoundaryShown, customGraphicColor)
         })
         .catch(function (error) {
           // Handle any errors
@@ -436,12 +437,14 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
   // Graphics layers for home, work, and intersection
   const homeGraphicsLayer = new GraphicsLayer();
-  const homeGraphicColor = [0, 222, 166, 0.4];
+  const homeGraphicColor = [124, 217, 159, 0.4];
   const workGraphicsLayer = new GraphicsLayer();
-  const workGraphicColor = [66, 135, 245, 0.5];
+  const workGraphicColor = [0, 135, 245, 0.5];
   const customGraphicsLayer = new GraphicsLayer();
-  const customGraphicColor = [0, 222, 166, 0.4];
+  const customGraphicColor = [227, 207, 91, 0.4];
   const intersectGraphicsLayer = new GraphicsLayer();
+
+
   workGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
   homeGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
   customGraphicsLayer.effect = "drop-shadow(3px, 3px, 4px)";
@@ -510,7 +513,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     // NEED TO ADD LOGIC TO DELETE A POINT
-    function addHomeCoordinate(isBoundaryShown) {
+    function addHomeCoordinate(isBoundaryShown, graphicColor) {
       if (homeX && homeY) {
         console.log("hit home");
         homeGraphicsLayer.removeAll()
@@ -522,7 +525,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         };
         const simpleMarkerSymbol = {
           type: "simple-marker",
-          color: [0, 222, 166],  // Mint Green
+          color: homeGraphicColor,  // Mint Green
           outline: {
             color: [255, 255, 255], // White
             width: 1,
@@ -537,7 +540,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         homeGraphicsLayer.add(pointGraphic);
         // Service area for home address
         if (isBoundaryShown) {
-          homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
+          homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference, homeTravelType))
           solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, homeGraphicColor, 'home');
         }
         changeView();
@@ -557,7 +560,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         };
         const simpleMarkerSymbol = {
           type: "simple-marker",
-          color: [0, 222, 166],  // Mint Green
+          color: customGraphicColor,  // Mint Green
           outline: {
             color: [255, 255, 255], // White
             width: 1,
@@ -571,7 +574,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         // adds layer and recenters view
         customGraphicsLayer.add(pointGraphic);
         if (isBoundaryShown) {
-          customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
+          customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference, customTravelType))
           solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, customGraphicColor, 'custom')
         }
         changeView();
@@ -591,7 +594,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         };
         const simpleMarkerSymbol = {
           type: "simple-marker",
-          color: [0, 222, 166],  // Mint Green
+          color: workGraphicColor,  // Mint Green
           outline: {
             color: [255, 255, 255], // White
             width: 1,
@@ -605,7 +608,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         workGraphicsLayer.add(pointGraphic);
         // Service area for work address
         if (isBoundaryShown) {
-          workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference));
+          workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference, workTravelType));
           solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor, 'work' );
         }
         changeView();
