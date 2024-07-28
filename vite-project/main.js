@@ -749,8 +749,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
 
       if (!intersectLat || !intersectLong ) {
-        intersectLong = -122.26800755691998;
-        intersectLat = 47.390387863000136;
+        // intersectLong = -122.26800755691998;
+        // intersectLat = 47.390387863000136;
+        warningmodal.open = true;
+        return;
         // alert('You must have a target area created');
         // return;
       }
