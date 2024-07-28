@@ -30,10 +30,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       view:view
     })
 
-    // let legend = new Legend({
-    //   view: view,
-    // })
-
     view.ui.add(legend, "top-left")
     view.ui.add("logoDiv", "bottom-right");
 
