@@ -670,8 +670,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         intersect = geometryEngine.intersect(serviceAreaGeometries.workGeometry, serviceAreaGeometries.customGeometry);
       }
 
-      intersectLat = intersect.centroid.latitude;
-      intersectLong = intersect.centroid.longitude;
+      intersectLat = intersect?.centroid.latitude;
+      intersectLong = intersect?.centroid.longitude;
 
       view.goTo({
         center: [intersectLong, intersectLat],
