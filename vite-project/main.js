@@ -704,7 +704,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
       const simpleFillSymbol = {
         type: "simple-fill",
-        color: [227, 139, 79, 0.2],  // Orange, opacity 80%
+        color: [255, 255, 255, 0.3],  // White, opacity 80%
         outline: {
           color: [255, 255, 255],
           width: 1
