@@ -532,7 +532,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     // NEED TO ADD LOGIC TO DELETE A POINT
-    function addHomeCoordinate(isBoundaryShown, graphicColor) {
+    function addHomeCoordinate(isBoundaryShown) {
       if (homeX && homeY) {
         console.log("hit home");
         homeGraphicsLayer.removeAll()
