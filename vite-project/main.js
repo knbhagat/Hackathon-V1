@@ -24,7 +24,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     });
     
     // console.log(view.ui.components)
-    view.ui.components = []
+    view.ui.components = ["attribution"]
     
     let zoom = new Zoom({
       view:view
