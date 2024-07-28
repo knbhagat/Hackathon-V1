@@ -295,7 +295,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // clears graphics layer for intersection
     intersectGraphicsLayer.removeAll();
     view.graphics.removeAll();
-    view.popup.close();
+    view.closePopup();
     delete serviceAreaGeometries.homeGeometry;
     // reseting logic
     homeAddressElement.value = '';
@@ -318,7 +318,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // clears graphics layer for intersection
     intersectGraphicsLayer.removeAll();
     view.graphics.removeAll();
-    view.popup.close();
+    view.closePopup();
     // removes work address from serviceAreaGeometriesObject
     delete serviceAreaGeometries.workGeometry;
     console.log(serviceAreaGeometries);
@@ -344,7 +344,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     intersectGraphicsLayer.removeAll();
     // removes custom address from serviceAreaGeometriesObject
     view.graphics.removeAll();
-    view.popup.close();
+    view.closePopup();
     delete serviceAreaGeometries.customGeometry;
     // reseting logic
     customAddressElement.value = '';
@@ -660,7 +660,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           currentGraphicsLayer.removeAll()
           // removes previous intersect graphic
           view.graphics.removeAll();
-          view.popup.close();
+          view.closePopup();
 
           // logic to properly assign home vs work elements of service area geometries
           if (type) {
