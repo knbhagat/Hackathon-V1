@@ -51,6 +51,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     const homeAddressElement = document.getElementById('homeAddress');
     const workAddressElement = document.getElementById('workAddress');
     const customAddressElement = document.getElementById('customAddress');
+    const jobDescriptionElement = document.getElementById('jobDescription');
     const placeInputElement = document.getElementById('placeInput');
     // gets calcite-slider elements
     const travelTimeEl = document.getElementById('homeSlider');
@@ -92,6 +93,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let homeAddress;
     let workAddress;
     let customAddress;
+    let jobDescription;
     let placeInput;
     // slider inputs
     let travelTime = travelTimeEl.value;
@@ -198,6 +200,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     placeInputElement.addEventListener('calciteInputTextChange', function (event) {
       placeInput = event.target.value;
       console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
+    });
+    // Gets Jobe Description
+    jobDescriptionElement.addEventListener('calciteInputTextChange', function (event) {
+      jobDescription = event.target.value;
+      console.log("job description", jobDescription);
     });
 
     /**
