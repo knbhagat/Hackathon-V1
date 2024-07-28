@@ -107,7 +107,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let homeAddress;
     let workAddress;
     let customAddress;
-    let jobDescription;
+    let jobDescription = "";
     let placeInput;
     // slider inputs
     let travelTime = travelTimeEl.value;
@@ -330,6 +330,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     workTravelType = "Driving";
     workCommuteTimeEl.value = 30;
     workCommuteTime = 30;
+    jobDescriptionElement.value = '';
+    jobDescription = ""
     workX = undefined;
     workY = undefined;
     if (customX && customY && homeX && homeY) {
@@ -740,7 +742,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // adds current ring polygon to a graphic layer and adds layer to map
     intersectGraphicsLayer.add(polygonGraphic)
     map.add(intersectGraphicsLayer);
-
   }  
   
   function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
@@ -852,13 +853,18 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   function showPopup(response){
     let parts = response.address.split(',').map(part => part.trim());
     view.openPopup({
-      title: response.attributes.PlaceName || "Address",
+      title: "Information",
       content:
-        response.attributes.LongLabel +
-        "<br><br>" +
-        response.location.longitude.toFixed(5) +
-        ", " +
-        response.location.latitude.toFixed(5) + `Job Board: https://www.indeed.com/jobs?q=developer&l=${parts[0]}%2C+${parts[1]}`,
+      `<div style="color: blue; width:fit-content;">
+        <a href="https://www.indeed.com/jobs?q=${jobDescription}&l=${parts[0]}%2C+${parts[1]}" target="_blank">
+          Indeed Job Board
+        </a>
+      </div>
+      <div style="color: blue; width: fit-content;">
+        <a href="https://www.rent.com/${parts[1]}/${parts[0]}-apartments" target="_blank" >
+          Apartments For Rent
+        </a>
+      </div>`,
       location: response.location,
     });
     popupAddGraphic(response);
