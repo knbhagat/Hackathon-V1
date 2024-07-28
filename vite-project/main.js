@@ -650,6 +650,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       } else if (serviceAreaGeometries.workGeometry && serviceAreaGeometries.customGeometry) {
         intersect = geometryEngine.intersect(serviceAreaGeometries.workGeometry, serviceAreaGeometries.customGeometry);
       }
+      intersectLat = intersect.centroid.latitude;
+      intersectLong = intersect.centroid.longitude;
+
       // sends each ring of intersection geometry to funciton to draw polygons
       for (let index = 0; index < intersect.rings?.length; index++) {
         createIntersectPolygon(intersect, index)
@@ -717,6 +720,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     function loadInfoGraphic() {
+      console.log('long/lat: ' + intersectLong + ', ' + intersectLat);
+
+      intersectLong = -122.26800755691998;
+      intersectLat = 47.390387863000136;
+
       if (!intersectLat || !intersectLong ) {
         alert('You must have a target area created');
         return;
