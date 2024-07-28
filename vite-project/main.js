@@ -156,7 +156,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     });
 
     infoElement.addEventListener('click', () => {
-      loadInfoGraphic();
+      loadInfoGraphic("Community Information");
     });
 
     /**
@@ -766,7 +766,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
     }
 
-    function loadInfoGraphic() {
+    function loadInfoGraphic(placeName) {
+      let modaltitle  = document.getElementById('modal-title');
+      modaltitle.innerHTML = placeName + " - What's in Walking Distance?";
+
       console.log('long/lat: ' + intersectLong + ', ' + intersectLat);
 
 
