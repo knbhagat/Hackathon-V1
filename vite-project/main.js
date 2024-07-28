@@ -51,6 +51,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     const homeAddressElement = document.getElementById('homeAddress');
     const workAddressElement = document.getElementById('workAddress');
     const customAddressElement = document.getElementById('customAddress');
+    const jobDescriptionElement = document.getElementById('jobDescription');
     const placeInputElement = document.getElementById('placeInput');
     // gets calcite-slider elements
     const travelTimeEl = document.getElementById('homeSlider');
@@ -92,6 +93,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let homeAddress;
     let workAddress;
     let customAddress;
+    let jobDescription;
     let placeInput;
     // slider inputs
     let travelTime = travelTimeEl.value;
@@ -156,6 +158,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         valHomeAddressEl.icon = "check";
         valHomeAddressEl.status = "valid";
         valHomeAddressEl.innerText = "Place added on map!";
+        geocodeHomeAddress(false);
       } else {
         valHomeAddressEl.icon = "x";
         valHomeAddressEl.status = "invalid"
@@ -170,6 +173,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         valWorkAddressEl.icon = "check";
         valWorkAddressEl.status = "valid";
         valWorkAddressEl.innerText = "Place added on map!";
+        geocodeWorkAddress(false);
       } else {
         valWorkAddressEl.icon = "x";
         valWorkAddressEl.status = "invalid"
@@ -184,6 +188,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         valCustomAddressEl.icon = "check";
         valCustomAddressEl.status = "valid";
         valCustomAddressEl.innerText = "Place added on map!";
+        geocodeCustomAddress(false);
       } else {
         valCustomAddressEl.icon = "x";
         valCustomAddressEl.status = "invalid"
@@ -195,6 +200,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     placeInputElement.addEventListener('calciteInputTextChange', function (event) {
       placeInput = event.target.value;
       console.log("place, work, home, custom", placeInput, workAddress, homeAddress, customAddress);
+    });
+    // Gets Jobe Description
+    jobDescriptionElement.addEventListener('calciteInputTextChange', function (event) {
+      jobDescription = event.target.value;
+      console.log("job description", jobDescription);
     });
 
     /**
@@ -336,24 +346,24 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   homeRunEl.addEventListener('click', function() {
     console.log("hit");
     intersectGraphicsLayer.removeAll();
-    geocodeHomeAddress();
+    geocodeHomeAddress(true);
   })
   workRunEl.addEventListener('click', function() {
     console.log("hit");
     intersectGraphicsLayer.removeAll();
-    geocodeWorkAddress();
+    geocodeWorkAddress(true);
   })
   customRunEl.addEventListener('click', function() {
     console.log("hit");
     intersectGraphicsLayer.removeAll();
-    geocodeCustomAddress();
+    geocodeCustomAddress(true);
   })
 
 
     /**
     * Mapping functions
     */
-    function geocodeHomeAddress() {
+    function geocodeHomeAddress(isBoundaryShown) {
       const geocodedUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${homeAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
       fetch(geocodedUrl)
         .then(function (response) {
@@ -367,7 +377,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           console.log("Geocode response: ", data);
           homeX = data.candidates[0]?.location.x;
           homeY = data.candidates[0]?.location.y;
-          addHomeCoordinate()
+          addHomeCoordinate(isBoundaryShown)
         })
         .catch(function (error) {
           // Handle any errors
@@ -378,7 +388,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
 
-    function geocodeWorkAddress() {
+    function geocodeWorkAddress(isBoundaryShown) {
       console.log("Work address API response")
       const geocodedUrlwork = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${workAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
       fetch(geocodedUrlwork)
@@ -393,7 +403,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           console.log("Geocode response for work addy: ", dataw);
           workX = dataw.candidates[0]?.location.x;
           workY = dataw.candidates[0]?.location.y;
-          addWorkCoordinate()
+          addWorkCoordinate(isBoundaryShown)
         })
         .catch(function (error) {
           // Handle any errors
@@ -401,7 +411,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         });
     }
 
-    function geocodeCustomAddress() {
+    function geocodeCustomAddress(isBoundaryShown) {
       console.log("Custom address API response")
       const geocodedUrlwork = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${customAddress}&category=&outFields=*&forStorage=false&f=pjson&token=${apiKey}`;
       fetch(geocodedUrlwork)
@@ -416,7 +426,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           console.log("Geocode response for work addy: ", datac);
           customX = datac.candidates[0]?.location.x;
           customY = datac.candidates[0]?.location.y;
-          addCustomCoordinate()
+          addCustomCoordinate(isBoundaryShown)
         })
         .catch(function (error) {
           // Handle any errors
@@ -449,7 +459,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         const midLongitude = (homeY + workY + customY) / 3;
         view.goTo({
           center: [midLatitude, midLongitude],
-          zoom: 7,
+          zoom: 8,
         });
         // no custom
       } else if (homeX && homeY && workX && workY) {
@@ -500,7 +510,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     // NEED TO ADD LOGIC TO DELETE A POINT
-    function addHomeCoordinate() {
+    function addHomeCoordinate(isBoundaryShown) {
       if (homeX && homeY) {
         console.log("hit home");
         homeGraphicsLayer.removeAll()
@@ -526,14 +536,16 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         // adds layer and recenters view
         homeGraphicsLayer.add(pointGraphic);
         // Service area for home address
-        homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
-        solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, homeGraphicColor, 'home');
+        if (isBoundaryShown) {
+          homeServiceAreaParams = (createServiceAreaParams(pointGraphic, travelTime, view.SpatialReference))
+          solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, homeGraphicColor, 'home');
+        }
         changeView();
       }
     }
 
     // NEED TO ADD LOGIC TO DELETE A POINT
-    function addCustomCoordinate() {
+    function addCustomCoordinate(isBoundaryShown) {
       if (customX && customY) {
         console.log("hit custom");
         customGraphicsLayer.removeAll()
@@ -558,14 +570,16 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
 
         // adds layer and recenters view
         customGraphicsLayer.add(pointGraphic);
-        customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
-        solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, customGraphicColor, 'custom')
+        if (isBoundaryShown) {
+          customServiceAreaParams = (createServiceAreaParams(pointGraphic, customTime, view.SpatialReference))
+          solveServiceArea(serviceAreaUrl, customServiceAreaParams, customGraphicsLayer, customGraphicColor, 'custom')
+        }
         changeView();
     }
   }
 
 
-    function addWorkCoordinate() {
+    function addWorkCoordinate(isBoundaryShown) {
       if (workX && workY) {
         console.log("hit work")
         workGraphicsLayer.removeAll();
@@ -590,8 +604,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
         // adds layer and recenters view
         workGraphicsLayer.add(pointGraphic);
         // Service area for work address
-        workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference));
-        solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, [66, 135, 245, 0.5], 'work' );
+        if (isBoundaryShown) {
+          workServiceAreaParams = (createServiceAreaParams(pointGraphic, workCommuteTime, view.SpatialReference));
+          solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor, 'work' );
+        }
         changeView();
       }
     }
@@ -650,8 +666,17 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       } else if (serviceAreaGeometries.workGeometry && serviceAreaGeometries.customGeometry) {
         intersect = geometryEngine.intersect(serviceAreaGeometries.workGeometry, serviceAreaGeometries.customGeometry);
       }
+
+      intersectLat = intersect?.centroid.latitude;
+      intersectLong = intersect?.centroid.longitude;
+
+      view.goTo({
+        center: [intersectLong, intersectLat],
+        zoom: 10,
+      });
+
       // sends each ring of intersection geometry to funciton to draw polygons
-      for (let index = 0; index < intersect.rings?.length; index++) {
+      for (let index = 0; index < intersect?.rings?.length; index++) {
         createIntersectPolygon(intersect, index)
       }
     }
@@ -717,9 +742,14 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     }
 
     function loadInfoGraphic() {
+      console.log('long/lat: ' + intersectLong + ', ' + intersectLat);
+
+
       if (!intersectLat || !intersectLong ) {
-        alert('You must have a target area created');
-        return;
+        intersectLong = -122.26800755691998;
+        intersectLat = 47.390387863000136;
+        // alert('You must have a target area created');
+        // return;
       }
       
 
