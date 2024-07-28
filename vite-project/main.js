@@ -107,7 +107,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let homeAddress;
     let workAddress;
     let customAddress;
-    let jobDescription;
+    let jobDescription = "";
     let placeInput;
     // slider inputs
     let travelTime = travelTimeEl.value;
@@ -297,7 +297,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // clears graphics layer for intersection
     intersectGraphicsLayer.removeAll();
     view.graphics.removeAll();
-    view.popup.close();
+    view.closePopup();
     delete serviceAreaGeometries.homeGeometry;
     // reseting logic
     homeAddressElement.value = '';
@@ -320,7 +320,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // clears graphics layer for intersection
     intersectGraphicsLayer.removeAll();
     view.graphics.removeAll();
-    view.popup.close();
+    view.closePopup();
     // removes work address from serviceAreaGeometriesObject
     delete serviceAreaGeometries.workGeometry;
     console.log(serviceAreaGeometries);
@@ -332,6 +332,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     workTravelType = "Driving";
     workCommuteTimeEl.value = 30;
     workCommuteTime = 30;
+    jobDescriptionElement.value = '';
+    jobDescription = ""
     workX = undefined;
     workY = undefined;
     if (customX && customY && homeX && homeY) {
@@ -346,7 +348,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     intersectGraphicsLayer.removeAll();
     // removes custom address from serviceAreaGeometriesObject
     view.graphics.removeAll();
-    view.popup.close();
+    view.closePopup();
     delete serviceAreaGeometries.customGeometry;
     // reseting logic
     customAddressElement.value = '';
@@ -662,7 +664,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
           currentGraphicsLayer.removeAll()
           // removes previous intersect graphic
           view.graphics.removeAll();
-          view.popup.close();
+          view.closePopup();
 
           // logic to properly assign home vs work elements of service area geometries
           if (type) {
@@ -742,8 +744,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     // adds current ring polygon to a graphic layer and adds layer to map
     intersectGraphicsLayer.add(polygonGraphic)
     map.add(intersectGraphicsLayer);
-
-    console.log('LEGEND', legend)
   }  
   
   function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
@@ -849,13 +849,18 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   function showPopup(response){
     let parts = response.address.split(',').map(part => part.trim());
     view.openPopup({
-      title: response.attributes.PlaceName || "Address",
+      title: "Information",
       content:
-        response.attributes.LongLabel +
-        "<br><br>" +
-        response.location.longitude.toFixed(5) +
-        ", " +
-        response.location.latitude.toFixed(5) + `Job Board: https://www.indeed.com/jobs?q=developer&l=${parts[0]}%2C+${parts[1]}`,
+      `<div style="color: blue; width:fit-content;">
+        <a href="https://www.indeed.com/jobs?q=${jobDescription}&l=${parts[0]}%2C+${parts[1]}" target="_blank">
+          Indeed Job Board
+        </a>
+      </div>
+      <div style="color: blue; width: fit-content;">
+        <a href="https://www.rent.com/${parts[1]}/${parts[0]}-apartments" target="_blank" >
+          Apartments For Rent
+        </a>
+      </div>`,
       location: response.location,
     });
     popupAddGraphic(response);
