@@ -650,8 +650,21 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       } else if (serviceAreaGeometries.workGeometry && serviceAreaGeometries.customGeometry) {
         intersect = geometryEngine.intersect(serviceAreaGeometries.workGeometry, serviceAreaGeometries.customGeometry);
       }
+
+      intersectLat = intersect.centroid.latitude;
+      intersectLong = intersect.centroid.longitude;
+      console.log("Lat", intersectLat)
+      console.log("Long", intersectLong)
+      console.log("home coordinates", homeX. homeY);
+      console.log("work coordinates", workX, workY);
+
+      view.goTo({
+        center: [intersectLong, intersectLat],
+        zoom: 10,
+      });
+
       // sends each ring of intersection geometry to funciton to draw polygons
-      for (let index = 0; index < intersect.rings?.length; index++) {
+      for (let index = 0; index < intersect?.rings?.length; index++) {
         createIntersectPolygon(intersect, index)
       }
     }
