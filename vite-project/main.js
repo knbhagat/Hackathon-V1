@@ -121,6 +121,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let intersectLat;
     let intersectLong;
     let intersect;
+    let intersectArea;
 
 
     /**
@@ -691,6 +692,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
       } else if (serviceAreaGeometries.workGeometry && serviceAreaGeometries.customGeometry) {
         intersect = geometryEngine.intersect(serviceAreaGeometries.workGeometry, serviceAreaGeometries.customGeometry);
       }
+
+      intersectArea = Math.round(geometryEngine.geodesicArea(intersect, "square-miles") * 100) / 100
+      console.log('INTERSECT AREA in square miles', intersectArea)
 
       intersectLat = intersect?.centroid.latitude;
       intersectLong = intersect?.centroid.longitude;
