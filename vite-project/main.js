@@ -122,8 +122,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     let intersectLong;
     let intersect;
 
-    // const intersectGraphicsColor = [255,255,255, 0.4];
-
 
     /**
      * For side panels rendering configuration blocks
@@ -743,7 +741,6 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     intersectGraphicsLayer.add(polygonGraphic)
     map.add(intersectGraphicsLayer);
 
-    console.log('LEGEND', legend)
   }  
   
   function buildRequestURL(token, studyAreas, report, format, reportFields = "{}", studyAreasOptions = "{}", returnType = "{}", useData = '{"sourceCountry":"US","hierarchy":"esri2024"}', f = "bin") {
