@@ -153,7 +153,7 @@
       </calcite-panel>
     </calcite-shell-panel>
 
-    <calcite-shell-panel class="visible-xs" slot="footer">
+    <calcite-shell-panel class="visible-xs" slot="panel-bottom" layout="horizontal" position="end">
 
       <calcite-action-bar expand-disabled expanded slot="action-bar" layout="horizontal">
         <calcite-action-group>
@@ -256,21 +256,11 @@
             <calcite-button icon-start="play" id="runCustom" width="half">Run</calcite-button>
             </div>
         </calcite-block>
-
-        <calcite-block open id="placesContainer" class="hidden calcite-blocks">
-          <calcite-label>Interests:
-            <calcite-input-text icon="pin-tear-f" id="placeInput" placeholder="Places"></calcite-input-text>
-          </calcite-label>
-          <div style="display: flex; gap: 10px;">
-            <calcite-chip icon-start="pin-tear-f">Whole Foods</calcite-chip>
-            <calcite-chip icon-start="pin-tear-f">Whole Foods</calcite-chip>
-          </div>
-        </calcite-block>
       </calcite-panel>
     </calcite-shell-panel>
 
-    <div slot="panel-top" class="mint hidden-xs map-padding" id="aniket-trial-map"></div>
-    <div class="mint visible-xs" id="aniket-trial-map"></div>
+    <div  class="mint hidden-xs map-padding" id="aniket-trial-map"></div>
+    <div slot="panel-top" class="mint visible-xs" id="aniket-trial-map"></div>
     <div class="hidden-xs" id="logoDiv" class="esri-widget">
       <img style="width: 100px; height: 160px;" src="https://nitro.maps.arcgis.com/sharing/rest/content/items/9e6b660e35bc4ff1b06c02efc8a756e7/data">
     </div>
