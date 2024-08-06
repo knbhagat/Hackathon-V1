@@ -316,6 +316,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     travelTime = 30;
     homeX = undefined;
     homeY = undefined;
+    valHomeAddressEl.icon = "information";
+    valHomeAddressEl.status = "idle"
+    valHomeAddressEl.innerText = "Please enter an address above!";
     if (workX && workY && customX && customY) {
       solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor);
     }
@@ -344,6 +347,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     jobDescription = ""
     workX = undefined;
     workY = undefined;
+    valWorkAddressEl.icon = "information";
+    valWorkAddressEl.status = "idle"
+    valWorkAddressEl.innerText = "Please enter an address above!";
     if (customX && customY && homeX && homeY) {
       solveServiceArea(serviceAreaUrl, homeServiceAreaParams, homeGraphicsLayer, homeGraphicColor);
     }
@@ -367,6 +373,9 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
     customTime = 30;
     customX = undefined;
     customY = undefined;
+    valCustomAddressEl.icon = "information";
+    valCustomAddressEl.status = "idle"
+    valCustomAddressEl.innerText = "Please enter an address above!";
 
     if (workX && workY && homeX && homeY) {
       solveServiceArea(serviceAreaUrl, workServiceAreaParams, workGraphicsLayer, workGraphicColor);
@@ -864,20 +873,22 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/Graphic", "esri/
   }
  
   function showPopup(response){
-    let parts = response.address.split(',').map(part => part.trim());
-    mappedAddress = response.address;
+    console.log('response', response);
+    const city = response.attributes.City;
+    const state = response.attributes.Region;
+    mappedAddress = city + ", " + state;
     view.openPopup({
       title: `Intersecting Area Information:`,
       content:
-      `<p><b>${parts[1]}, ${parts[2]}</b> lies within the travel time parameters selected. This area is <b>${intersectArea}</b> sq. miles. Please find the below buttons to see apartments and jobs within this area. Make sure to fill in the <b>Job Title Input (Work Section)</b> to see Indeed jobs within this area.</p>
+      `<p><b>${city}, ${state}</b> lies within the travel time parameters selected. This area is <b>${intersectArea}</b> sq. miles. Please find the below buttons to see apartments and jobs within this area. Make sure to fill in the <b>Job Title Input (Work Section)</b> to see Indeed jobs within this area.</p>
       <div style="width: 200px; text-align: center; margin-left: auto; margin-right: auto;">
-        <a style=" width: 200px; padding: 2px; color: white; text-decoration: none; background-color: #2557A7" href="https://www.indeed.com/jobs?q=${jobDescription}&l=${parts[0]}%2C+${parts[1]}" target="_blank">
+        <a style=" width: 200px; padding: 2px; color: white; text-decoration: none; background-color: #2557A7" href="https://www.indeed.com/jobs?q=${jobDescription}&l=${city}%2C+${state}" target="_blank">
           Indeed Job Board
         </a>
       </div>
       <br>
       <div style="width: 200px; text-align: center; margin-left: auto; margin-right: auto;">
-        <a style="width: 200px; padding: 2px; color: white; text-decoration: none; background-color: #000" href="https://www.rent.com/${parts[1]}/${parts[0]}-apartments" target="_blank" >
+        <a style="width: 200px; padding: 2px; color: white; text-decoration: none; background-color: #000" href="https://www.rent.com/${state}/${city}-apartments" target="_blank" >
           Apartments For Rent
         </a>
       </div>
