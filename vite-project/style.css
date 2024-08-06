@@ -12,9 +12,12 @@ body{
 }
 
 #aniket-trial-map {
-  padding-left: 479px;
   height: 100%;
   margin: 0;
+}
+
+.map-padding {
+  padding-left: 479px;
 }
 
 #logoDiv {
