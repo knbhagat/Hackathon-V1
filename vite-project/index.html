@@ -21,8 +21,7 @@
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 </head>
 
 <body class="mint">
@@ -32,12 +31,9 @@
     <calcite-navigation slot="header">
       <calcite-navigation-logo slot="logo" heading="SettleSmart" icon="rings-largest"
         description="Post-graduation Planning Solution"></calcite-navigation-logo>
-      <!-- <calcite-menu slot="content-end"> -->
-        <!-- <calcite-menu-item text="Get Started!"></calcite-menu-item> -->
-      <!-- </calcite-menu> -->
     </calcite-navigation>
 
-    <calcite-shell-panel slot="panel-start" class="hidden-xs">
+    <calcite-shell-panel slot="panel-start">
 
       <calcite-action-bar expand-disabled expanded slot="action-bar">
         <calcite-action-group>
@@ -153,115 +149,10 @@
       </calcite-panel>
     </calcite-shell-panel>
 
-    <calcite-shell-panel class="visible-xs" slot="panel-bottom" layout="horizontal" position="end">
 
-      <calcite-action-bar expand-disabled expanded slot="action-bar" layout="horizontal">
-        <calcite-action-group>
+    <div  class="mint map-padding" id="aniket-trial-map"></div>
 
-          <calcite-action id="home" text="Home" icon="home"></calcite-action>
-          <calcite-action id="work" text="Work" icon="organization"></calcite-action>
-          <calcite-action id="custom" text="Add Custom" icon="pin-plus"></calcite-action>
-        </calcite-action-group>
-        <calcite-action-group>
-          <!-- <calcite-action id="places" text="Places" icon="pins"></calcite-action> -->
-          <calcite-action id="info" text="Infographic" icon="infographic"></calcite-action>
-        </calcite-action-group>
-      </calcite-action-bar>
-
-      <calcite-panel heading="Parameter Configurations:">
-        <calcite-block open id="homeContainer" class="calcite-blocks">
-          <calcite-label>Home Address:
-            <calcite-input-text icon="pin-tear-f" id="homeAddress" placeholder="Address"></calcite-input-text>
-            <calcite-input-message id="validHomeAddress" icon="information" status="idle" scale="m">
-              Please enter an address above!
-              </calcite-input-message>  
-          </calcite-label>
-          <hr class="mint-hr">
-          <calcite-label>
-            Travel Mode:
-            <calcite-combobox id="homeTravelType" value="Driving" placeholder-icon="rural-driving-time"
-              placeholder="Travel Mode" selection-mode="single">
-              <calcite-combobox-item selected icon="car" value="Driving" text-label="Driving"></calcite-combobox-item>
-              <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
-            </calcite-combobox>
-          </calcite-label>
-          <hr class="mint-hr">
-              <calcite-label>
-                Travel Time (minutes):
-                <calcite-slider id=homeSlider label="Preferred Home Commute" value="30" label-handles label-ticks ticks="10" min-label="0" max-label="100"></calcite-slider>
-            </calcite-label>
-            <hr class="mint-hr">
-            <div style="display: flex; width: 100%;">
-              <calcite-button icon-start="reset" id="resetHome" appearance="outline-fill" width="half">Reset</calcite-button>
-              <calcite-button  icon-start="play" id="runHome" width="half">Run</calcite-button>
-              </div>
-          </calcite-block>
-
-        <calcite-block open id="workContainer" class="hidden calcite-blocks">
-          <calcite-label>Work Address:
-            <calcite-input-text icon="pin-tear-f" id="workAddress" placeholder="Address"></calcite-input-text>
-              <calcite-input-message id="validWorkAddress" icon="information" status="idle" scale="m">
-                Please enter an address above!
-              </calcite-input-message>
-          </calcite-label>
-          <hr class="mint-hr">
-          <calcite-label>What job are you interested in?
-            <calcite-input-text icon="organization" id="jobDescription" placeholder="Job Title"></calcite-input-text>
-          </calcite-label>
-          <hr class="mint-hr">
-          <calcite-label>
-            Travel Mode:
-            <calcite-combobox id="workTravelType" value="Driving" placeholder-icon="rural-driving-time"
-              placeholder="Travel Mode" selection-mode="single">
-              <calcite-combobox-item selected icon="car" value="Driving" text-label="Driving"></calcite-combobox-item>
-              <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
-            </calcite-combobox>
-          </calcite-label>
-          <hr class="mint-hr">
-          <calcite-label>Travel Time (minutes):
-            <calcite-slider id="workSlider" label="Preferred Work Commute" value="30" label-handles label-ticks
-              ticks="10" min-label="0" max-label="100"></calcite-slider>
-          </calcite-label>
-          <hr class="mint-hr">
-          <div style="display: flex; width: 100%;">
-            <calcite-button icon-start="reset" id="resetWork" appearance="outline-fill" width="half">Reset</calcite-button>
-            <calcite-button icon-start="play" id="runWork" width="half">Run</calcite-button>
-            </div>
-        </calcite-block>
-
-        <calcite-block open id="customContainer" class="hidden calcite-blocks">
-          <calcite-label>Custom Address:
-            <calcite-input-text icon="pin-tear-f" id="customAddress" placeholder="Address"></calcite-input-text>
-              <calcite-input-message id="validCustomAddress" icon="information" status="idle" scale="m">
-                Please enter an address above!
-              </calcite-input-message>
-          </calcite-label>
-          <hr class="mint-hr">
-          <calcite-label>
-            Travel Mode:
-            <calcite-combobox id="customTravelType" value="Driving" placeholder-icon="rural-driving-time"
-              placeholder="Travel Mode" selection-mode="single">
-              <calcite-combobox-item selected icon="car" value="Driving" text-label="Driving"></calcite-combobox-item>
-              <calcite-combobox-item icon="walking" value="Walking" text-label="Walking"></calcite-combobox-item>
-            </calcite-combobox>
-          </calcite-label>
-          <hr class="mint-hr">
-          <calcite-label>Travel Time (minutes):
-            <calcite-slider id="customSlider" label="Preferred Commute" value="30" label-handles label-ticks
-              ticks="10" min-label="0" max-label="100"></calcite-slider>
-          </calcite-label>
-          <hr class="mint-hr">
-          <div style="display: flex; width: 100%;">
-            <calcite-button icon-start="reset" id="resetCustom" appearance="outline-fill" width="half">Reset</calcite-button>
-            <calcite-button icon-start="play" id="runCustom" width="half">Run</calcite-button>
-            </div>
-        </calcite-block>
-      </calcite-panel>
-    </calcite-shell-panel>
-
-    <div  class="mint hidden-xs map-padding" id="aniket-trial-map"></div>
-    <div slot="panel-top" class="mint visible-xs" id="aniket-trial-map"></div>
-    <div class="hidden-xs" id="logoDiv" class="esri-widget">
+    <div id="logoDiv" class="esri-widget">
       <img style="width: 100px; height: 160px;" src="https://nitro.maps.arcgis.com/sharing/rest/content/items/9e6b660e35bc4ff1b06c02efc8a756e7/data">
     </div>
   </calcite-shell>
